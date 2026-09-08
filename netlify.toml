@@ -1,0 +1,31 @@
+# ============================================================
+# Netlify 設定 — ビルド済みの静的サイトをそのまま配信する。
+# HTML/CSS/JS はローカルの tools/build_site.py で生成済みで、
+# リポジトリにコミットされているため Netlify 側でのビルドは不要。
+# （記事や翻訳を更新したら、ローカルで build_site.py を実行して
+#   コミットしてからデプロイする運用）
+# ============================================================
+[build]
+  publish = "."
+  command = ""            # ビルドしない（生成済みファイルを配信）
+
+# クリーンURL（/en/profile/ など）はディレクトリの index.html を
+# Netlify が自動配信する。旧 .html は転送用スタブ。追加リダイレクト不要。
+
+# バージョン付きアセット（?v=ハッシュ）は長期キャッシュしてよい。
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# お知らせ一覧データは毎回検証（内容が更新されるため）。
+[[headers]]
+  for = "/assets/news-index.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# HTML は毎回検証（?v= により参照アセットは自動で最新化される）。
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
