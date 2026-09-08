@@ -2,50 +2,36 @@
 """Build localized HTML variants and search/social discovery files."""
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlsplit
+
+from build_news import collect_news, write_index
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = "https://ja.a-kusama.com"
+
+# Assets that carry a content-hash ?v= query so browsers never serve a stale
+# copy after a rebuild (a stale site.js was generating broken article links).
+VERSIONED_ASSETS = ("site.js", "data.js", "news-data.js", "locale.js", "style.css")
+
+
+def asset_version() -> str:
+    digest = hashlib.sha1()
+    for name in VERSIONED_ASSETS:
+        path = ROOT / "assets" / name
+        if path.exists():
+            digest.update(path.read_bytes())
+    return digest.hexdigest()[:8]
+
+
+def version_assets(text: str, version: str) -> str:
+    return re.sub(r'(/assets/[\w.-]+\.(?:js|css))(?!\?)', rf"\1?v={version}", text)
 PAGES = ["index.html", "engineer.html", "educator.html", "researcher.html", "profile.html", "news.html", "release.html"]
 LOCALES = ("ja", "en", "de")
-
-ARTICLE_TRANSLATIONS = {
-    "license-joho-2025": {
-        "en": ("Awarded an Upper-Secondary Computing Teaching License", ["I was awarded a Japanese upper-secondary teaching license in computing.", "Following teacher-training studies and teaching experience at N High School, S High School, and Waseda University Senior High School, I am now formally qualified as a computing educator. I will continue contributing to computing education in Japan."]),
-        "de": ("Lehrbefähigung für Informatik an Oberschulen erhalten", ["Mir wurde die japanische Lehrbefähigung für Informatik an Oberschulen erteilt.", "Nach dem Lehramtsstudium und Unterrichtserfahrungen an der N High School, der S High School und der Waseda University Senior High School bin ich nun offiziell als Informatiklehrer qualifiziert. Ich werde mich weiterhin für die digitale Bildung in Japan einsetzen."]),
-    },
-    "meisei-2025": {
-        "en": ("Enrolled in Meisei University’s Distance-Learning Civics Program", ["I enrolled in Meisei University’s distance-learning subject-specialist program for upper-secondary civics.", "By deepening my subject knowledge in civics alongside computing, I aim to support students’ learning from a broader perspective."]),
-        "de": ("Fernstudium für das Unterrichtsfach Gemeinschaftskunde an der Meisei University begonnen", ["Ich habe mich für das Fernstudium der Meisei University im Fachprogramm Gemeinschaftskunde für Oberschulen eingeschrieben.", "Durch die Vertiefung meiner Fachkenntnisse in Gemeinschaftskunde zusätzlich zur Informatik möchte ich Lernende aus einer breiteren Perspektive unterstützen."]),
-    },
-    "waseda-ta-end-2024": {
-        "en": ("Completed My Term as a Computing Teaching Assistant at Waseda (2022–2024)", ["I completed my term as a computing teaching assistant at Waseda University Senior High School, serving from September 2022 through July 2024.", "Supporting programming classes in R provided a valuable opportunity to practice and study teaching that is clear and accessible."]),
-        "de": ("Tätigkeit als Teaching Assistant für Informatik an der Waseda beendet (2022–2024)", ["Meine Tätigkeit als Teaching Assistant für Informatik an der Waseda University Senior High School von September 2022 bis Juli 2024 ist beendet.", "Die Unterstützung von Programmierkursen in R bot eine wertvolle Gelegenheit, verständlichen Unterricht praktisch zu erproben und zu erforschen."]),
-    },
-    "waseda-ta-2022": {
-        "en": ("Appointed Computing Teaching Assistant at Waseda University Senior High School", ["I was appointed as a teaching assistant for computing at Waseda University Senior High School.", "I will support programming classes."]),
-        "de": ("Teaching Assistant für Informatik an der Waseda University Senior High School", ["Ich wurde als Teaching Assistant für Informatik an der Waseda University Senior High School berufen.", "Ich unterstütze den Programmierunterricht."]),
-    },
-    "willen-2022": {
-        "en": ("Appointed Chairperson of the Nonprofit Willen", ["I was appointed chairperson of the nonprofit organization Willen.", "We will develop career-development support for young engineers and IT-use support programs for citizens and organizations."]),
-        "de": ("Zum Vorstandsvorsitzenden der Nonprofit-Organisation Willen berufen", ["Ich wurde zum Vorstandsvorsitzenden der Nonprofit-Organisation Willen berufen.", "Wir entwickeln Angebote zur Karriereförderung junger Entwicklerinnen und Entwickler sowie zur Unterstützung von Bürgern und Organisationen bei der IT-Nutzung."]),
-    },
-    "award-thesis-2021": {
-        "en": ("Received the 72nd Graduating Class Outstanding Thesis Award at Waseda", ["I received the Outstanding Thesis Award for the 72nd graduating class of Waseda University Senior High School."]),
-        "de": ("Auszeichnung für eine herausragende Abschlussarbeit des 72. Jahrgangs der Waseda", ["Ich erhielt die Auszeichnung für eine herausragende Abschlussarbeit des 72. Abschlussjahrgangs der Waseda University Senior High School."]),
-    },
-    "freelance-2020": {
-        "en": ("Started Working as a Freelance Software Engineer", ["I began working as a freelance software engineer.", "Focusing on web system development, I support organizations with problem-solving and new-business launches through contract and on-site engagements."]),
-        "de": ("Tätigkeit als freiberuflicher Softwareentwickler aufgenommen", ["Ich begann meine Tätigkeit als freiberuflicher Softwareentwickler.", "Mit Schwerpunkt auf Websystemen unterstütze ich Organisationen bei Problemlösungen und beim Aufbau neuer Geschäftsfelder – projektbezogen und vor Ort."]),
-    },
-    "nikkei-stockleague-2019": {
-        "en": ("Selected in the Nikkei STOCK League", ["My entry was selected in the Nikkei STOCK League organized by Nikkei Inc."]),
-        "de": ("Auswahl bei der Nikkei STOCK League", ["Mein Beitrag wurde bei der von Nikkei Inc. veranstalteten Nikkei STOCK League ausgewählt."]),
-    },
-}
 
 META = {
     "index.html": {
@@ -88,7 +74,7 @@ META = {
 
 def url_for(page: str, locale: str) -> str:
     prefix = "" if locale == "ja" else f"/{locale}"
-    tail = "/" if page == "index.html" else f"/{page}"
+    tail = "/" if page == "index.html" else f"/{page.removesuffix('.html')}/"
     return BASE + prefix + tail
 
 
@@ -127,8 +113,8 @@ def seo_block(page: str, locale: str) -> str:
 <meta name="robots" content="{robots}">
 <link rel="canonical" href="{canonical}">
 {alternates}
-<link rel="icon" href="{'../' if locale != 'ja' else ''}assets/favicon.svg" type="image/svg+xml">
-<link rel="manifest" href="{'../' if locale != 'ja' else ''}site.webmanifest">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="image_src" href="{BASE}/assets/akira-kusama.jpg">
 <meta property="og:title" content="{html.escape(title, quote=True)}">
 <meta property="og:description" content="{html.escape(description, quote=True)}">
@@ -165,27 +151,27 @@ def prepare(text: str, page: str, locale: str) -> str:
     text = re.sub(r'<html lang="[^"]+">', f'<html lang="{locale}">', text, count=1)
     text = re.sub(r"<title>.*?</title>", f"<title>{html.escape(title)}</title>", text, count=1)
     text = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{html.escape(description, quote=True)}">', text, count=1)
+    text = re.sub(r'((?:href|src)=")(?:\./|\.\./)*assets/', r'\1/assets/', text)
+    def page_link(match):
+        return 'href="' + urlsplit(url_for(match[1], locale)).path + match[2] + '"'
+    text = re.sub(r'href="([a-z]+\.html)([^"]*)"', page_link, text)
     text = text.replace("</head>", seo_block(page, locale) + "\n</head>", 1)
+    text = text.replace('<script src="/assets/site.js"></script>', '<script src="/assets/news-data.js"></script>\n<script src="/assets/site.js"></script>')
     if locale != "ja":
-        text = re.sub(r'((?:href|src)=")\./assets/', r'\1../assets/', text)
-        text = re.sub(r'((?:href|src)=")assets/', r'\1../assets/', text)
-        text = text.replace('fetch("assets/', 'fetch("../assets/').replace('fetch("news/', 'fetch("../news/')
-        text = text.replace('<script src="../assets/site.js"></script>', '<script src="../assets/site.js"></script>\n<script src="../assets/locale.js"></script>')
+        text = text.replace('<script src="/assets/site.js"></script>', '<script src="/assets/site.js"></script>\n<script src="/assets/locale.js"></script>')
     return text
 
-
-def build_sitemap() -> str:
+def build_sitemap(news_index: list[dict]) -> str:
     rows=[]
     for page in PAGES[:-1]:
         for locale in LOCALES:
             links="".join(f'<xhtml:link rel="alternate" hreflang="{code}" href="{html.escape(url_for(page,code))}"/>' for code in LOCALES)
             links+=f'<xhtml:link rel="alternate" hreflang="x-default" href="{html.escape(url_for(page,"ja"))}"/>'
             rows.append(f'<url><loc>{html.escape(url_for(page,locale))}</loc><lastmod>2026-09-08</lastmod>{links}</url>')
-    news_index=json.loads((ROOT/"assets/news-index.json").read_text(encoding="utf-8"))
     for article in news_index:
         slug=article["slug"]
         lastmod=article.get("updated") or article.get("date") or "2026-09-08"
-        article_urls={code:BASE+("" if code=="ja" else "/"+code)+f"/news/{slug}.html" for code in LOCALES}
+        article_urls={code:BASE+("" if code=="ja" else "/"+code)+f"/news/{slug}/" for code in LOCALES}
         links="".join(f'<xhtml:link rel="alternate" hreflang="{code}" href="{html.escape(article_urls[code])}"/>' for code in LOCALES)
         links+=f'<xhtml:link rel="alternate" hreflang="x-default" href="{html.escape(article_urls["ja"])}"/>'
         for locale in LOCALES:
@@ -193,41 +179,22 @@ def build_sitemap() -> str:
     return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'+'\n'.join(rows)+'\n</urlset>\n'
 
 
-def read_article(slug: str) -> tuple[dict[str, str], list[str]]:
-    text=(ROOT/"news"/f"{slug}.md").read_text(encoding="utf-8")
-    match=re.match(r"^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$",text)
-    if not match:
-        return {},[p.strip() for p in text.split("\n\n") if p.strip() and not p.startswith("#")]
-    meta={}
-    for line in match.group(1).splitlines():
-        item=re.match(r'^\s*([A-Za-z0-9_]+)\s*:\s*"?(.*?)"?\s*$',line)
-        if item: meta[item.group(1)]=item.group(2)
-    body=re.sub(r"^\s*#\s+.*\n", "", match.group(2)).strip()
-    return meta,[p.strip() for p in body.split("\n\n") if p.strip()]
-
-
-def article_page(article: dict, locale: str) -> str:
-    slug=article["slug"]
-    source_meta,source_paragraphs=read_article(slug)
-    if locale=="ja":
-        title=source_meta.get("title") or article["title"]
-        paragraphs=source_paragraphs
-        tag=source_meta.get("tag") or article.get("tag","")
-    else:
-        title,paragraphs=ARTICLE_TRANSLATIONS[slug][locale]
-        tag={"en":{"資格":"Credential","進学":"Education","活動":"Activity","就任":"Appointment","受賞":"Award","独立":"Freelance"},"de":{"資格":"Qualifikation","進学":"Studium","活動":"Aktivität","就任":"Ernennung","受賞":"Auszeichnung","独立":"Freiberuflich"}}[locale].get(article.get("tag",""),article.get("tag",""))
-    description=paragraphs[0]
-    prefix="../" if locale=="ja" else "../../"
-    locale_root="" if locale=="ja" else f"/{locale}"
-    canonical=f"{BASE}{locale_root}/news/{slug}.html"
-    article_urls={code:BASE+("" if code=="ja" else "/"+code)+f"/news/{slug}.html" for code in LOCALES}
+def article_page(article: dict, locale: str, document: dict) -> str:
+    slug = article["slug"]
+    fields = document["translations"][locale]
+    title, tag, description = fields["title"], fields["tag"], fields["description"]
+    prefix = "/"
+    locale_root = "" if locale == "ja" else f"/{locale}"
+    canonical = f"{BASE}{locale_root}/news/{slug}/"
+    article_urls = {code: BASE + ("" if code == "ja" else "/" + code) + f"/news/{slug}/" for code in LOCALES}
     og_locale={"ja":"ja_JP","en":"en_US","de":"de_DE"}[locale]
+    og_alternates="\n".join(f'<meta property="og:locale:alternate" content="{value}">' for code,value in {"ja":"ja_JP","en":"en_US","de":"de_DE"}.items() if code!=locale)
     image_alt={"ja":"ソフトウェア開発者・教育者・研究者、草間 暁のポートレート","en":"Portrait of Akira Kusama, software developer, educator, and researcher","de":"Porträt von Akira Kusama, Softwareentwickler, Pädagoge und Forscher"}[locale]
     ui={"ja":{"skip":"本文へスキップ","crumb":"パンくず","news":"お知らせ","published":"公開","updated":"更新","back":"お知らせ一覧へ戻る"},"en":{"skip":"Skip to content","crumb":"Breadcrumb","news":"News","published":"Published","updated":"Updated","back":"Back to news"},"de":{"skip":"Zum Inhalt springen","crumb":"Brotkrümelnavigation","news":"Aktuelles","published":"Veröffentlicht","updated":"Aktualisiert","back":"Zurück zu Aktuelles"}}[locale]
     alternates="\n".join(f'<link rel="alternate" hreflang="{code}" href="{article_urls[code]}">' for code in LOCALES)+f'\n<link rel="alternate" hreflang="x-default" href="{article_urls["ja"]}">' 
     graph={"@context":"https://schema.org","@type":"BlogPosting","@id":canonical+"#article","url":canonical,"headline":title,"description":description,"inLanguage":locale,"datePublished":article.get("date"),"dateModified":article.get("updated") or article.get("date"),"image":BASE+"/assets/akira-kusama.jpg","author":{"@type":"Person","@id":BASE+"/#person","name":"Akira Kusama","url":BASE+"/"},"publisher":{"@id":BASE+"/#person"},"mainEntityOfPage":{"@type":"WebPage","@id":canonical}}
     updated=(f'<span><b>{ui["updated"]}</b> <time datetime="{html.escape(article["updated"])}">{html.escape(article["updated"].replace("-","."))}</time></span>' if article.get("updated") and article.get("updated")!=article.get("date") else "")
-    body="\n".join(f"<p>{html.escape(paragraph)}</p>" for paragraph in paragraphs)
+    body=fields["body"]
     return f'''<!doctype html>
 <html lang="{locale}">
 <head>
@@ -238,7 +205,7 @@ def article_page(article: dict, locale: str) -> str:
 <meta name="theme-color" content="#ECEBE4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;family=Shippori+Mincho:wght@500;600;700&amp;family=Noto+Sans+JP:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
 <link rel="stylesheet" href="{prefix}assets/style.css">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <link rel="canonical" href="{canonical}">
@@ -251,7 +218,9 @@ def article_page(article: dict, locale: str) -> str:
 <meta property="og:url" content="{canonical}">
 <meta property="og:site_name" content="Akira Kusama">
 <meta property="og:locale" content="{og_locale}">
+{og_alternates}
 <meta property="og:image" content="{BASE}/assets/akira-kusama.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="828"><meta property="og:image:height" content="1104">
 <meta property="og:image:alt" content="{html.escape(image_alt,quote=True)}">
 <meta property="article:published_time" content="{html.escape(article.get('date',''))}">
@@ -261,19 +230,20 @@ def article_page(article: dict, locale: str) -> str:
 <meta name="twitter:title" content="{html.escape(title,quote=True)}">
 <meta name="twitter:description" content="{html.escape(description,quote=True)}">
 <meta name="twitter:image" content="{BASE}/assets/akira-kusama.jpg">
+<meta name="twitter:image:alt" content="{html.escape(image_alt,quote=True)}">
 <script type="application/ld+json">{json.dumps(graph,ensure_ascii=False,separators=(',',':'))}</script>
 </head>
 <body>
 <a class="skip" href="#main">{ui['skip']}</a>
 <header id="site-header"></header>
-<main id="main">
+<main id="main" data-no-translate>
   <div class="page-hero"><div class="wrap-narrow">
-    <nav class="breadcrumb" aria-label="{ui['crumb']}"><a href="../index.html">Home</a><span class="sep">/</span><a href="../news.html">{ui['news']}</a><span class="sep">/</span><span>{html.escape(title)}</span></nav>
+    <nav class="breadcrumb" aria-label="{ui['crumb']}"><a href="{locale_root}/">Home</a><span class="sep">/</span><a href="{locale_root}/news/">{ui['news']}</a><span class="sep">/</span><span>{html.escape(title)}</span></nav>
     <div class="release-tag">{html.escape(tag)}</div>
     <h1 class="page-title">{html.escape(title)}</h1>
     <div class="release-meta"><span><b>{ui['published']}</b> <time datetime="{html.escape(article.get('date',''))}">{html.escape(article.get('date','').replace('-','.'))}</time></span>{updated}</div>
   </div></div>
-  <article class="article"><div class="wrap-narrow"><div class="md-body">{body}</div><p style="margin-top:40px"><a class="sec-more-link" href="../news.html">← {ui['back']}</a></p></div></article>
+  <article class="article"><div class="wrap-narrow"><div class="md-body">{body}</div><p style="margin-top:40px"><a class="sec-more-link" href="{locale_root}/news/">← {ui['back']}</a></p></div></article>
 </main>
 <footer id="site-footer"></footer>
 <script src="{prefix}assets/data.js"></script>
@@ -284,24 +254,54 @@ def article_page(article: dict, locale: str) -> str:
 '''
 
 
+def redirect_page(target: str, release: bool = False) -> str:
+    # Keep old bookmarks working while all visible links use directory URLs.
+    script = "var target=" + json.dumps(target) + ";"
+    if release:
+        script += 'var slug=new URLSearchParams(location.search).get("slug");if(slug&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)){target+=slug+"/";}location.replace(target+location.hash);'
+    else:
+        script += 'location.replace(target+location.search+location.hash);'
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akira Kusama</title><meta name="robots" content="noindex,follow">
+<link rel="canonical" href="{BASE}{target}">
+<script>{script}</script></head><body><a href="{target}">Continue →</a></body></html>
+"""
+
+
 def main() -> None:
-    originals={page:(ROOT/page).read_text(encoding="utf-8") for page in PAGES}
-    for page, source in originals.items():
-        (ROOT/page).write_text(prepare(source,page,"ja"),encoding="utf-8")
-        for locale in ("en","de"):
-            target=ROOT/locale/page
-            target.parent.mkdir(parents=True,exist_ok=True)
-            target.write_text(prepare(source,page,locale),encoding="utf-8")
-    (ROOT/"sitemap.xml").write_text(build_sitemap(),encoding="utf-8")
-    (ROOT/"robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n",encoding="utf-8")
-    news_index=json.loads((ROOT/"assets/news-index.json").read_text(encoding="utf-8"))
+    # Validate every language before changing any generated file.
+    news_index, documents = collect_news()
+    outputs = {}
+    for page in PAGES[:-1]:
+        source = (ROOT / "tools/templates" / page).read_text(encoding="utf-8")
+        for locale in LOCALES:
+            path = urlsplit(url_for(page, locale)).path
+            outputs[ROOT / path.lstrip("/") / "index.html"] = prepare(source, page, locale)
+            if page != "index.html":
+                legacy = ROOT / ("" if locale == "ja" else locale) / page
+                outputs[legacy] = redirect_page(path)
+    for locale in LOCALES:
+        language = "" if locale == "ja" else f"/{locale}"
+        outputs[ROOT / language.lstrip("/") / "release.html"] = redirect_page(language + "/news/", release=True)
     for article in news_index:
         for locale in LOCALES:
-            target=ROOT/("" if locale=="ja" else locale)/"news"/f'{article["slug"]}.html'
-            target.parent.mkdir(parents=True,exist_ok=True)
-            target.write_text(article_page(article,locale),encoding="utf-8")
-    manifest={"name":"Akira Kusama Portfolio","short_name":"Akira Kusama","start_url":"/","display":"standalone","background_color":"#ECEBE4","theme_color":"#2C3A86","icons":[{"src":"/assets/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
-    (ROOT/"site.webmanifest").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+            language = "" if locale == "ja" else f"/{locale}"
+            path = f'{language}/news/{article["slug"]}/'
+            outputs[ROOT / path.lstrip("/") / "index.html"] = article_page(article, locale, documents[article["slug"]])
+            legacy = ROOT / language.lstrip("/") / "news" / f'{article["slug"]}.html'
+            outputs[legacy] = redirect_page(path)
+    version = asset_version()
+    for target, content in outputs.items():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(version_assets(content, version), encoding="utf-8")
+    write_index(news_index)
+    (ROOT / "sitemap.xml").write_text(build_sitemap(news_index), encoding="utf-8")
+    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
+    manifest = {"name":"Akira Kusama Portfolio","short_name":"Akira Kusama","start_url":"/","display":"standalone","background_color":"#ECEBE4","theme_color":"#2C3A86","icons":[{"src":"/assets/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+    (ROOT / "site.webmanifest").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Built 18 pages and {len(news_index) * 3} article pages with extensionless URLs.")
 
 
 if __name__ == "__main__":

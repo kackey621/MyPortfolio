@@ -303,7 +303,7 @@ button.press-clear:disabled{opacity:.35;color:var(--muted);border-color:var(--ru
 
 /* ---------- footer ---------- */
 footer{padding:clamp(56px,7vw,88px) 0 48px;background:var(--paper-2)}
-.foot-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:start}
+.foot-grid{display:block;max-width:760px}
 @media (max-width:760px){.foot-grid{grid-template-columns:1fr;gap:32px}}
 .foot-lead{font-family:"Shippori Mincho",serif;font-size:clamp(20px,2.6vw,28px);line-height:1.6;font-weight:600;margin:0 0 8px;letter-spacing:.02em;text-wrap:balance}
 .foot-sub{font-size:14px;color:var(--ink-soft);max-width:44ch;margin:0}
@@ -528,6 +528,21 @@ a.xp-org:hover{text-decoration:underline}
 .pm-duties li{position:relative;padding:9px 0 9px 20px;border-bottom:1px solid var(--rule-soft);font-size:14.5px;line-height:1.8;color:var(--ink)}
 .pm-duties li:last-child{border-bottom:0}
 .pm-duties li::before{content:"—";position:absolute;left:0;color:var(--shu)}
+
+/* ---------- localized pages: hide the Japanese-design English glosses ----------
+   On ja pages, headings pair a Japanese title with a small English subtitle.
+   On en/de the main title is already localized, so those English glosses become
+   a redundant duplicate (en) or stray mixed-language text (de). Hide them. */
+:root[lang="en"] .sec-title .en,
+:root[lang="de"] .sec-title .en,
+:root[lang="en"] .page-title .en,
+:root[lang="de"] .page-title .en,
+:root[lang="en"] .cap-en,
+:root[lang="de"] .cap-en,
+:root[lang="en"] .exp-h span,
+:root[lang="de"] .exp-h span,
+:root[lang="en"] .pm-eyebrow,
+:root[lang="de"] .pm-eyebrow{display:none}
 
 /* ---------- reveal on load ---------- */
 .fade{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}

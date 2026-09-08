@@ -1,76 +1,56 @@
 #!/usr/bin/env python3
-"""
-build_news.py — news/*.md をスキャンし、フロントマターと Git 情報から
-assets/news-index.json を生成する。
+"""Build the news index from trilingual Markdown and Git dates."""
+import json
+import re
+import subprocess
+from pathlib import Path
 
-・公開日 (date) … フロントマターの date
-・作成日 (created) … Git にファイルが最初に追加されたコミット日（なければ date）
-・更新日 (updated) … Git の最終コミット日（なければファイル mtime）
+from article_content import read_article
 
-使い方:  python3 tools/build_news.py
-（記事を追加・更新して commit した後に実行すると、日付が Git に即して更新されます）
-"""
-import os, re, json, subprocess, datetime, glob
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NEWS_DIR = os.path.join(ROOT, "news")
-OUT = os.path.join(ROOT, "assets", "news-index.json")
+ROOT = Path(__file__).resolve().parents[1]
 
 
-def git_date(args):
-    try:
-        out = subprocess.run(["git"] + args, cwd=ROOT, capture_output=True, text=True)
-        val = out.stdout.strip().splitlines()
-        return val
-    except Exception:
-        return []
+def git_dates(root: Path, path: Path) -> list[str]:
+    result = subprocess.run(
+        ["git", "log", "--format=%as", "--", str(path.relative_to(root))],
+        cwd=root, capture_output=True, text=True,
+    )
+    return result.stdout.strip().splitlines() if result.returncode == 0 else []
 
 
-def parse_frontmatter(text):
-    m = re.match(r"^---\s*\n(.*?)\n---\s*\n?(.*)$", text, re.S)
-    meta, body = {}, text
-    if m:
-        body = m.group(2)
-        for line in m.group(1).splitlines():
-            mm = re.match(r'^\s*([A-Za-z0-9_]+)\s*:\s*"?(.*?)"?\s*$', line)
-            if mm:
-                meta[mm.group(1)] = mm.group(2)
-    return meta, body
-
-
-def created_date(path):
-    # 最初に追加されたコミットの author date（%as = YYYY-MM-DD）
-    vals = git_date(["log", "--diff-filter=A", "--format=%as", "--", path])
-    return vals[-1] if vals else None
-
-
-def updated_date(path):
-    vals = git_date(["log", "-1", "--format=%as", "--", path])
-    if vals:
-        return vals[0]
-    ts = os.path.getmtime(path)
-    return datetime.date.fromtimestamp(ts).isoformat()
-
-
-def main():
-    items = []
-    for path in glob.glob(os.path.join(NEWS_DIR, "*.md")):
-        slug = os.path.splitext(os.path.basename(path))[0]
-        meta, _ = parse_frontmatter(open(path, encoding="utf-8").read())
-        date = meta.get("date") or updated_date(path)
+def collect_news(root: Path = ROOT) -> tuple[list[dict], dict]:
+    items, documents = [], {}
+    for path in sorted((root / "news").glob("*.md")):
+        slug = path.stem
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
+            raise ValueError(f"{path}: use a lowercase, hyphen-separated slug")
+        document = read_article(path)
+        documents[slug] = document
+        meta = document["meta"]
+        dates = git_dates(root, path)
+        updated = meta.get("updated") or (dates[0] if dates else meta["date"])
+        translations = {code: {key: value for key, value in fields.items() if key != "body"}
+                        for code, fields in document["translations"].items()}
         items.append({
-            "slug": slug,
-            "title": meta.get("title", slug),
-            "tag": meta.get("tag", ""),
-            "date": date,
-            "created": created_date(path) or date,
-            "updated": updated_date(path),
+            "slug": slug, "title": translations["ja"]["title"],
+            "tag": translations["ja"]["tag"], "date": meta["date"],
+            "created": dates[-1] if dates else meta["date"], "updated": updated,
+            "translations": translations,
         })
-    items.sort(key=lambda x: x["date"], reverse=True)
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    json.dump(items, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-    print(f"wrote {OUT} ({len(items)} entries)")
+    items.sort(key=lambda item: (item["date"], item["slug"]), reverse=True)
+    return items, documents
+
+
+def write_index(items: list[dict], root: Path = ROOT) -> None:
+    output = root / "assets/news-index.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(items, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (root / "assets/news-data.js").write_text(
+        "/* Generated from news/*.md. Do not edit. */\nwindow.PRESS = "
+        + json.dumps(items, ensure_ascii=False, indent=2) + ";\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
-    main()
+    items, _ = collect_news()
+    write_index(items)
+    print(f"Built {len(items)} trilingual news entries.")

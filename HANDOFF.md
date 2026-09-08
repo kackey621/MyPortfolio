@@ -6,7 +6,7 @@
 - 対象リポジトリ: `/Users/akira/Documents/Dev/MyPortfolio`
 - 種別: 依存ライブラリなしの**静的マルチページサイト**（GitHub Pages 想定）
 - 参照元（旧サイト）: https://ja.a-kusama.com/
-- 最終更新: 2026-09（コミット `a23a68d` 時点）
+- 最終更新: 2026-09-08（三言語Markdown・拡張子なしURLへの移行）
 
 ---
 
@@ -40,38 +40,20 @@
 
 ---
 
-## 3. ディレクトリ構成
+## 3. 編集元とURL
 
-```
-.
-├── index.html          # トップ（概要・自己紹介・目的別入口・現在の活動／主な経歴・お知らせ最新5件）
-├── engineer.html       # 目的別詳細：エンジニア（できること・開発実績・役割別リンク）
-├── educator.html       # 目的別詳細：教育者（指導歴・資格・指導実績）
-├── researcher.html     # 目的別詳細：研究者（研究関心・在籍・外部プロフィール）
-├── profile.html        # 経歴（案件・実績エクスプローラー／職歴学歴／資格受賞国際交流）
-├── news.html           # お知らせ一覧（全件）
-├── release.html        # お知らせ詳細（?slug= で news/<slug>.md を marked で描画）
-├── news/               # リリース記事（Markdown・1件1ファイル）
-│   └── *.md            #   フロントマター: title / tag / date
-├── tools/
-│   └── build_news.py   # news/*.md → assets/news-index.json（Git 日付を付与）
-├── assets/
-│   ├── style.css       # 全ページ共通スタイル（トークン・全コンポーネント）
-│   ├── data.js         # ★単一データソース（下記 4 章）
-│   ├── site.js         # ★共通スクリプト（下記 5 章）
-│   ├── news-index.json # build_news.py の生成物（お知らせ一覧＋日付）
-│   └── akira-kusama.jpg # ポートレート
-├── .nojekyll           # GitHub Pages で Jekyll を無効化
-├── .gitignore
-├── README.md           # 利用者向けの概要（公開手順など）
-└── HANDOFF.md          # 本ドキュメント
-```
+主要ページの編集元は `tools/templates/*.html`、お知らせは `news/<slug>.md`。
+`tools/build_site.py` が `/<page>/index.html`、`/en/<page>/index.html`、
+`/de/<page>/index.html` と各言語の `news/<slug>/index.html` を生成する。
 
-**設計の要点**: ヘッダー・フッター・ナビ・案件・お知らせは各 HTML に直接書かず、
-`assets/site.js` が `assets/data.js`（＋`news-index.json`）を読み込んで**全ページへ注入・描画**する。
-ページを増やす／内容を変える作業は、原則 `data.js` の編集だけで完結する。
+URLは `/engineer/`、`/en/profile/`、`/de/news/<slug>/` など。
+内部リンク、言語切替、canonical、hreflang、サイトマップはこの形式で統一する。
+従来の `.html` は新URLへの転送用ファイル。本文の編集先ではない。
+`index.html` をURLに明示した場合もアドレスをディレクトリURLに正規化する。
 
----
+共通UIは `assets/site.js`、スタイルは `assets/style.css`、
+主要ページの表示翻訳は `assets/locale.js` に置く。
+記事の翻訳はMarkdown内で管理し、プログラムの辞書に登録しない。
 
 ## 4. データモデル（`assets/data.js`）
 
@@ -86,7 +68,7 @@
 | `SKILLS` | フィルター用スキル。`{name, kind, level(3=メイン/2=実務/1=利用可能), years}` |
 | `PHASE_LABELS` | 工程ラベル `["要件定義","基本設計","詳細設計","実装","テスト","保守運用"]` |
 | `PROJECTS` | 案件・実績（11 件）。下表参照 |
-| `PRESS` | `news-index.json` が取得できない場合のフォールバック（`{date,tag,slug,title}`） |
+| `PRESS` | `assets/news-data.js` にMarkdownから自動生成される一覧フォールバック（各言語のタイトル・タグ・説明文を含む） |
 
 ### `PROJECTS` の各フィールド
 
@@ -117,10 +99,11 @@
 |---|---|
 | `buildHeader()` | ヘッダーを注入。`NAV` から生成し、現在ページを `aria-current` で自動ハイライト。860px 以下は開閉式メニュー |
 | `initNavigation()` | モバイルナビの開閉、Esc キー、ページ遷移・画面拡大時の自動クローズを管理 |
+| `buildUtilityNav()` | SNS・外部プロフィールのアイコンナビと JA / EN / DE 言語切替を注入 |
 | `buildFooter()` | フッター（外部リンク＋コロフォン）を注入 |
-| `renderPress()` | `[data-press]` に描画。`assets/news-index.json` を優先取得、失敗時は `PRESS` にフォールバック。`data-press-limit` で件数制限（トップは 5）。各項目は `release.html?slug=` へリンク |
+| `renderPress()` | `[data-press]` に描画。`data-press-filter` がある一覧ではタグ・公開年・公開月で絞り込み。各項目は言語別の静的記事へリンク |
 | `renderRoleLinks()` | `[data-role-links="engineer"]` 等に、その役割の外部リンクを表示 |
-| `renderCareerSummary()` | ホームの `[data-career-summary]` に、現在からこれまでの主な活動を一本のタイムラインとして要約表示。各項目は `profile.html?project=<id>#skills` へ遷移 |
+| `renderCareerSummary()` | ホームの `[data-career-summary]` に、現在からこれまでの主な活動を一本のタイムラインとして要約表示。各項目は `/profile/?project=<id>#skills` へ遷移 |
 | `renderProjectExplorer()` | `[data-projects]`（任意で `data-projects-role`）に**案件エクスプローラー**を描画。`SKILLS.kind` 別の技術複数選択（AND）＋参画年範囲＋進行中フィルター、選択条件・件数、アニメーション付きフロー、クリック詳細を提供。`?skill=PHP,Laravel` のような初期指定も可 |
 | `buildPager()` | 目的別ページの前後ページャーを `ROLE_ORDER` から生成 |
 | `initTheme()` | ライト／ダーク切替（`localStorage` 保存） |
@@ -147,26 +130,33 @@
 - サイト上では、案件情報に関する内部的な取扱情報を注記しない。
 - 固有名を掲載しない案件は、業種・事業特性に沿った中立的な組織表記を使用する。
 - ホームでは主要な活動だけを表示し、全件は折りたたみ内の案件エクスプローラーで確認できるようにする。
+- 各ページの「〜をお考えの方へ」、相談誘導文、本文の相談ボタン、フッターの営業文を表示しない。
+- 連絡先は共通SNSアイコンナビに残す。
 
 ---
 
 ## 7. 編集・拡張のしかた
 
 ### お知らせ（プレスリリース）を追加する
-1. `news/<slug>.md` を作成（フロントマター必須）:
-   ```markdown
-   ---
-   title: "タイトル"
-   tag: "リリース"
-   date: "2026-04-01"
-   ---
 
-   # タイトル
+1. `news/<slug>.md` を作成する。形式はREADMEの三言語Markdown例を参照。
+2. 共通の `date` と言語別の `tag_ja` / `tag_en` / `tag_de` を記載する。
+3. `<!-- lang:ja -->` / `<!-- lang:en -->` / `<!-- lang:de -->` の各セクションに `# タイトル` と本文を書く。
+4. `.venv/bin/python tools/build_site.py` を実行する。一覧、本文、メタ情報、サイトマップを一括更新する。
 
-   本文（Markdown）…
-   ```
-2. `python3 tools/build_news.py` を実行 → `assets/news-index.json` を再生成。
-3. トップ（最新5件）と `news.html`（全件）に自動反映。詳細は `release.html?slug=<slug>`。
+タイトル・本文・タグの欠落とセクションの重複をビルド前に検証する。
+記事名のハードコードや、Python・JSへの翻訳登録は不要。
+任意の `updated` と `description_ja/en/de` で更新日・説明文を明示できる。
+Markdownの見出し、リンク、強調、リスト、表、コードブロック等はPython-MarkdownでHTMLに変換する。
+編集用ライブラリは `tools/requirements.txt`。配信時のPythonは不要。
+
+### 多言語・SEO・SNS共有
+
+- 日本語を既定とし、`en/` と `de/` に言語別の固有URLを配置。
+- 主要ページ・全記事に canonical / hreflang、固有 title / description、OGP、Twitter Card、JSON-LD を設定。
+- 記事は静的HTMLと `BlogPosting` 構造化データを生成するため、検索・SNSクローラーが本文と日付を直接取得できる。
+- SEO生成の本番基準URLは `tools/build_site.py` の `BASE`（現在 `https://ja.a-kusama.com`）。ドメイン変更時はここを更新する。
+- SNS専用横長画像は未生成。現状は既存ポートレートを OGP / Twitter Card に使用。
 
 ### 案件・実績を追加／修正する
 `assets/data.js` の `PROJECTS` を編集（4 章のフィールド参照）。`stack` の名称を `SKILLS.name` と
@@ -182,14 +172,19 @@
 
 ## 8. ローカル確認・公開
 
-### ローカル確認（**簡易サーバー必須**）
+### ローカル確認
+
+初回は `python3 -m venv .venv` と
+`.venv/bin/python -m pip install -r tools/requirements.txt` を実行。
+
 ```bash
-cd /Users/akira/Documents/Dev/MyPortfolio
-python3 -m http.server 8000
-# → http://localhost:8000
+.venv/bin/python tools/build_site.py
+.venv/bin/python -m unittest discover -s tools/tests -v
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
-`release.html` と一覧の自動描画は `fetch` を使うため、`file://` 直開きでは動かない
-（一覧は `data.js` フォールバック表示、詳細は不可）。GitHub Pages では問題なし。
+
+ブラウザは `http://127.0.0.1:8000/` から開く。ルート相対URLなのでHTTP配信が必要。
+記事本文は静的HTMLでありCDNのMarkdownライブラリには依存しない。
 
 ### GitHub へ公開（この環境に `gh` CLI は無い）
 ```bash
@@ -203,14 +198,14 @@ git push -u origin main
 
 ## 9. 既知の注意点・ハマりどころ
 
-- **`fetch` 依存**: お知らせ描画とリリース詳細はサーバー配信が前提（上記）。
-- **Git 日付の再生成**: 記事を編集・コミットした後に `python3 tools/build_news.py` を再実行すると、
+- **`fetch` 依存**: お知らせ一覧はサーバー配信が前提。記事詳細は静的HTML。
+- **Git 日付の再生成**: 記事を編集・コミットした後に `.venv/bin/python tools/build_site.py` を再実行すると、
   `news-index.json` の作成日／更新日が Git 情報に追従する。
 - **過去の回帰（教訓）**: 一時 `site.js` の文字列引用符不整合（`…</a>";`）で **site.js 全体が
   読み込めず**、ヘッダー・ナビ・エクスプローラー・お知らせが全ページで停止したことがある
   （コミット `a23a68d` で修正済み）。**site.js を編集したら、必ずブラウザでヘッダーが描画され、
   エクスプローラーにノードが出ることを確認する**こと。
-- **CDN 制約**: `marked`（`release.html`）は cdnjs から読み込み。オフラインでは詳細本文が出ない。
+- **旧URL**: `release.html?slug=` は互換用で `noindex`。新規リンクは `/news/<slug>/` を使用。
 
 ---
 

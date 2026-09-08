@@ -17,16 +17,16 @@ window.SITE = {
    ここに1行足すだけで、全ページのヘッダーとフッター目次に反映され、
    現在ページは自動でハイライトされます。 */
 window.NAV = [
-  { href:"index.html",      label:"ホーム",     en:"Home",       num:"00" },
-  { href:"engineer.html",   label:"エンジニア", en:"Engineer",   num:"01" },
-  { href:"educator.html",   label:"教育者",     en:"Educator",   num:"02" },
-  { href:"researcher.html", label:"研究者",     en:"Researcher", num:"03" },
-  { href:"profile.html",    label:"経歴",       en:"Profile",    num:"04" },
-  { href:"news.html",       label:"お知らせ",   en:"News",       num:"05" },
+  { href:"",              label:"ホーム",     en:"Home",       num:"00" },
+  { href:"engineer/",     label:"エンジニア", en:"Engineer",   num:"01" },
+  { href:"educator/",     label:"教育者",     en:"Educator",   num:"02" },
+  { href:"researcher/",   label:"研究者",     en:"Researcher", num:"03" },
+  { href:"profile/",      label:"経歴",       en:"Profile",    num:"04" },
+  { href:"news/",         label:"お知らせ",   en:"News",       num:"05" },
 ];
 
 /* 目的別ページの前後リンク（pager 自動生成用の順序） */
-window.ROLE_ORDER = ["engineer.html","educator.html","researcher.html"];
+window.ROLE_ORDER = ["engineer/","educator/","researcher/"];
 
 /* 外部リンク（フッターは全件、各役割ページは roles で絞り込み自動表示）
    roles: "engineer" / "educator" / "researcher" のうち、その項目に合うものを列挙 */
@@ -222,24 +222,4 @@ window.PROJECTS = [
     stack:["HTML/CSS","JavaScript"] },
 ];
 
-/* ============================================================
-   プレスリリース / お知らせ
-   - 新しい順に並べ替えて表示（date は "YYYY-MM-DD"）
-   - トップページは最新5件、news.html は全件を自動描画
-   - tag: 種別ラベル / url: 詳細先（空文字ならリンクなし表示）
-
-   新規追加の記入例（先頭に足すだけ。日付順は自動整列されます）:
-     { date:"2026-04-01", tag:"リリース", title:"新サービス『○○』を公開しました", url:"https://…" },
-   ============================================================ */
-/* ↓ news-index.json が取得できない場合のフォールバック（slug は news/<slug>.md に対応）。
-   通常は tools/build_news.py が生成する assets/news-index.json が使われます。 */
-window.PRESS = [
-  { date:"2025-09-01", tag:"資格", slug:"license-joho-2025",       title:"高等学校 情報科の教育職員免許状が交付されました" },
-  { date:"2025-04-01", tag:"進学", slug:"meisei-2025",            title:"明星大学 通信教育課程（教科専門コース・高校公民）に入学しました" },
-  { date:"2024-07-31", tag:"活動", slug:"waseda-ta-end-2024",     title:"早稲田大学高等学院 情報科TA（2022–2024）の任期を満了しました" },
-  { date:"2022-09-01", tag:"活動", slug:"waseda-ta-2022",         title:"早稲田大学高等学院にて情報科ティーチング・アシスタントに着任" },
-  { date:"2022-04-01", tag:"就任", slug:"willen-2022",            title:"特定非営利活動法人 Willen の理事長に就任しました" },
-  { date:"2021-04-01", tag:"受賞", slug:"award-thesis-2021",      title:"早稲田大学高等学院 第72期 優秀論文作品賞を受賞" },
-  { date:"2020-04-01", tag:"独立", slug:"freelance-2020",         title:"フリーランスエンジニアとして活動を開始しました" },
-  { date:"2019-05-01", tag:"受賞", slug:"nikkei-stockleague-2019", title:"日経STOCKリーグ 入選（日本経済新聞社）" },
-];
+/* News content is generated from news/*.md into assets/news-data.js. */

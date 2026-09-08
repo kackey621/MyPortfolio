@@ -9,14 +9,14 @@
 (function () {
   "use strict";
   var SITE_LOCALE=(document.documentElement.lang||"ja").split("-")[0];
-  var ASSET_PREFIX=SITE_LOCALE==="ja"?"":"../";
+  var LANGUAGE_ROOT=SITE_LOCALE==="ja"?"/":"/"+SITE_LOCALE+"/";
+  if (/\/index\.html$/.test(location.pathname)) {
+    history.replaceState(null,"",location.pathname.replace(/index\.html$/,"")+location.search+location.hash);
+  }
 
-  /* HTML が news/ 配下にある場合も、同じ言語のページへ正しく戻す。 */
+  /* All internal links are rooted in the current language directory. */
   function localPageHref(page) {
-    var parts=location.pathname.split("/").filter(Boolean);
-    if(parts[0]==="en"||parts[0]==="de") parts.shift();
-    var depth=Math.max(0,parts.length-1);
-    return Array(depth+1).join("../")+page;
+    return LANGUAGE_ROOT+page.replace(/^\//,"");
   }
 
   function esc(s) {
@@ -25,10 +25,11 @@
     });
   }
 
-  /* 現在ページのファイル名（例: "engineer.html"）。ルート/末尾スラッシュは index.html 扱い */
+  /* Articles keep the News navigation item selected. */
   function currentPage() {
-    var p = location.pathname.split("/").pop();
-    return !p || p === "" ? "index.html" : p;
+    var parts=location.pathname.split("/").filter(Boolean);
+    if(parts[0]==="en"||parts[0]==="de") parts.shift();
+    return parts.length ? parts[0]+"/" : "";
   }
 
   function fmtDate(iso) {
@@ -55,7 +56,7 @@
     host.className = "topbar";
     host.innerHTML =
       '<div class="wrap row">' +
-        '<a class="brand" href="' + esc(localPageHref("index.html")) + '">' + esc(SITE.name) +
+        '<a class="brand" href="' + esc(localPageHref("")) + '">' + esc(SITE.name) +
           '<span class="brand-en">' + esc(SITE.nameEn) + "</span></a>" +
         '<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">' +
           '<span class="nav-toggle-lines" aria-hidden="true"><i></i><i></i></span>' +
@@ -102,7 +103,7 @@
     var locale = (document.documentElement.lang || "ja").split("-")[0];
     var pathParts=location.pathname.split("/").filter(Boolean);
     if(pathParts[0]==="en"||pathParts[0]==="de") pathParts.shift();
-    var pagePath=pathParts.join("/")||"index.html";
+    var pagePath=pathParts.length?pathParts.join("/")+"/":"";
     var suffix = location.search + location.hash;
     function localeHref(target) {
       return (target === "ja" ? "/" : "/" + target + "/") + pagePath + suffix;
@@ -138,7 +139,7 @@
     var host = document.getElementById("site-footer");
     if (!host || !window.LINKS || !window.SITE) return;
 
-    var linkHtml = window.LINKS.map(function (l) {
+    var linkHtml = window.LINKS.filter(function(l){return l.icon!=="mail";}).map(function (l) {
       return (
         '<a href="' + esc(l.href) + '" target="_blank" rel="noopener">' +
         esc(l.label) + ' <span class="ext">' + esc(l.ext || "↗") + "</span></a>"
@@ -148,10 +149,6 @@
     host.innerHTML =
       '<div class="wrap">' +
         '<div class="foot-grid">' +
-          "<div>" +
-            '<p class="foot-lead">まずは、実現したい未来について<br>お聞かせください。</p>' +
-            '<p class="foot-sub">具体的な仕様が決まっていなくても構いません。開発・教育・研究のいずれのご相談も、最適なロードマップを一緒に描きます。</p>' +
-          "</div>" +
           '<nav class="foot-links" aria-label="外部リンク">' + linkHtml + "</nav>" +
         "</div>" +
         '<div class="colophon">' +
@@ -172,11 +169,15 @@
     if (!hosts.length) return;
 
     function paint(items) {
-      items = items.slice().sort(function (a, b) {
+      items = items.map(function(p){
+        var localized=(p.translations||{})[SITE_LOCALE]||p;
+        var tag=(localized.tag==null?"":String(localized.tag)).trim();
+        return Object.assign({},p,{title:localized.title,tag:tag});
+      }).sort(function (a, b) {
         return (a.date < b.date) ? 1 : (a.date > b.date) ? -1 : 0;
       });
       function itemHtml(p) {
-        var href = localPageHref("news/" + encodeURIComponent(p.slug || "") + ".html");
+        var href = localPageHref("news/" + encodeURIComponent(p.slug || "") + "/");
         return '<a class="news-item" href="' + href + '">' +
           '<span class="date">' + esc(fmtDate(p.date)) + "</span>" +
           '<span class="tag">' + esc(p.tag || "") + "</span>" +
@@ -237,7 +238,7 @@
       });
     }
 
-    fetch(ASSET_PREFIX+"assets/news-index.json", { cache: "no-cache" })
+    fetch("/assets/news-index.json", { cache: "no-cache" })
       .then(function (r) { if (!r.ok) throw new Error("no index"); return r.json(); })
       .then(paint)
       .catch(function () { if (window.PRESS) paint(window.PRESS); });
@@ -277,7 +278,7 @@
     hosts.forEach(function (host) {
       var role = host.getAttribute("data-role-links");
       var list = window.LINKS.filter(function (l) {
-        return l.roles && l.roles.indexOf(role) !== -1;
+        return l.icon!=="mail" && l.roles && l.roles.indexOf(role) !== -1;
       });
       if (!list.length) { host.hidden = true; return; }
       var items = list.map(function (l) {
@@ -304,7 +305,7 @@
     function entry(p) {
       var current = !p.end;
       var period = fmtYM(p.start) + " — " + (p.end ? fmtYM(p.end) : "現在");
-      var href = localPageHref("profile.html") + "?project=" + encodeURIComponent(p.id) + "#skills";
+      var href = localPageHref("profile/") + "?project=" + encodeURIComponent(p.id) + "#skills";
       return '<div class="career-step'+(current?' is-current':'')+'"><span class="career-dot" aria-hidden="true"></span>' +
         '<a class="career-card" href="'+href+'" aria-label="'+esc((p.org||{}).name)+'の詳細を見る">' +
           '<span class="career-card-top"><span class="career-state">'+(current?'現在':'活動実績')+'</span>' +
