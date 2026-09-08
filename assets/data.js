@@ -47,7 +47,7 @@ window.LINKS = [
    ・同意（Accept）を押したときだけ GA を読み込む。拒否（Reject）では
      一切読み込まない＝Cookie も送信も発生しない（site.js 参照）。
    ============================================================ */
-window.ANALYTICS = { id: "" };
+window.ANALYTICS = { id: "G-ZP6JL0WFY4" };
 
 /* プライバシーポリシーの URL（設定すると同意バナーにリンクを表示）。 */
 window.PRIVACY_URL = "";
