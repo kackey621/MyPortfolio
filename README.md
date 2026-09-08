@@ -14,15 +14,43 @@
 ├── educator.html       # 目的別詳細 — 教育者（For Education）
 ├── researcher.html     # 目的別詳細 — 研究者（For Academia）
 ├── profile.html        # 経歴詳細（職歴・学歴・資格・受賞・国際交流）
-├── news.html           # お知らせ / プレスリリース 全件
+├── news.html           # お知らせ / プレスリリース 一覧
+├── release.html        # お知らせ詳細（?slug= で news/<slug>.md を描画）
+├── news/               # リリース記事（Markdown・1件1ファイル）
+│   └── *.md
+├── tools/
+│   └── build_news.py   # news/*.md → assets/news-index.json（Git 日付を付与）
 ├── assets/
 │   ├── style.css       # 全ページ共通スタイル（配色・書体・レイアウト）
-│   ├── data.js         # ★サイトの単一データソース（ナビ・リンク・お知らせ）
-│   ├── site.js         # 共通スクリプト（ヘッダー/フッター注入・自動描画）
+│   ├── data.js         # ★単一データソース（ナビ・リンク・スキル・案件・お知らせ）
+│   ├── site.js         # 共通スクリプト（注入・案件エクスプローラー・お知らせ）
+│   ├── news-index.json # build_news.py の生成物（お知らせ一覧＋日付）
 │   └── akira-kusama.jpg
 ├── .nojekyll
 └── README.md
 ```
+
+### 案件エクスプローラー（実績）
+
+トップ・エンジニア・教育者・経歴の各ページに、`assets/data.js` の `PROJECTS` を元にした
+**フィルター＋ポップアップ**の実績ビューを表示します。技術で絞り込み、カードをクリックすると
+組織・参画情報・担当工程・技術スタックをパネルで確認できます。データはスキルシート由来です。
+
+### お知らせ（Markdown ＋ Git 日付）
+
+1件のリリース ＝ `news/<slug>.md`（フロントマターに `title` / `tag` / `date`）。
+
+```bash
+python3 tools/build_news.py      # news/*.md を走査して assets/news-index.json を生成
+```
+
+`build_news.py` は各記事の **公開日**（フロントマターの `date`）、**作成日**（Git で最初に
+追加されたコミット日）、**更新日**（Git の最終コミット日）を集計します。記事を追加・編集して
+`git commit` した後に再実行すると、日付が Git 情報に即して更新されます。詳細ページ
+（`release.html`）は Markdown を `marked`（CDN）で描画します。
+
+> ⚠️ `release.html` と一覧の自動描画は `fetch` を使うため、**簡易サーバー経由**での表示が必要です
+> （`file://` 直開きでは一覧は `data.js` のフォールバックを表示し、詳細は読み込めません）。GitHub Pages では問題なく動作します。
 
 - **依存ライブラリなし** — フレームワーク・ビルド不要。素の HTML/CSS/JS。Web フォント（Google Fonts）のみ外部参照。
 - **スクリプトで一元管理** — ヘッダー・フッター・ナビは各 HTML に直接書かず、`assets/site.js` が `assets/data.js` を読み込んで全ページに自動注入。

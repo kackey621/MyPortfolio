@@ -41,39 +41,112 @@ window.LINKS = [
 ];
 
 /* ============================================================
-   スキル × 経歴（skill-career explorer 用）
-   ・SKILLS … スキルとレベル（3=メイン / 2=実務あり / 1=利用可能）
-   ・EXPERIENCES … 経歴と、そこで使用したスキル（name で SKILLS と対応）
-   profile.html の #skill-explorer が、site.js により
-   「クリックで双方向に絞り込める一画面ビュー」として描画します。
+   スキル（フィルター用）
+   ・level … 3=メイン / 2=実務あり / 1=利用可能
+   ・years … スキルシート上の経験年数（目安）
    ============================================================ */
 window.SKILLS = [
-  { name:"PHP",           kind:"言語",         level:3 },
-  { name:"Ruby",          kind:"言語",         level:3 },
-  { name:"Python",        kind:"言語",         level:2 },
-  { name:"JavaScript",    kind:"言語",         level:2 },
-  { name:"HTML/CSS",      kind:"言語",         level:2 },
-  { name:"R",             kind:"言語",         level:1 },
-  { name:"Laravel",       kind:"フレームワーク", level:3 },
-  { name:"Ruby on Rails", kind:"フレームワーク", level:3 },
-  { name:"Vue",           kind:"フレームワーク", level:1 },
-  { name:"Flask",         kind:"フレームワーク", level:1 },
-  { name:"FastAPI",       kind:"フレームワーク", level:1 },
+  { name:"PHP",         kind:"言語",           level:3, years:5 },
+  { name:"Ruby",        kind:"言語",           level:3, years:5 },
+  { name:"JavaScript",  kind:"言語",           level:2, years:5 },
+  { name:"Python",      kind:"言語",           level:2, years:4 },
+  { name:"HTML/CSS",    kind:"言語",           level:2, years:5 },
+  { name:"R",           kind:"言語",           level:1, years:2 },
+  { name:"Laravel",     kind:"フレームワーク",   level:3, years:5 },
+  { name:"Rails",       kind:"フレームワーク",   level:3, years:5 },
+  { name:"Vue",         kind:"フレームワーク",   level:2, years:4 },
+  { name:"React",       kind:"フレームワーク",   level:2, years:3 },
+  { name:"Flask",       kind:"フレームワーク",   level:1, years:1 },
+  { name:"FastAPI",     kind:"フレームワーク",   level:1, years:1 },
+  { name:"MySQL",       kind:"データベース",     level:3, years:6 },
+  { name:"PostgreSQL",  kind:"データベース",     level:3, years:6 },
+  { name:"AWS",         kind:"インフラ",         level:2, years:5 },
+  { name:"Azure",       kind:"インフラ",         level:2, years:3 },
+  { name:"Linux",       kind:"インフラ",         level:2, years:5 },
+  { name:"Docker",      kind:"インフラ",         level:2, years:5 },
+  { name:"WordPress",   kind:"プロダクト",       level:3, years:10 },
+  { name:"EC-CUBE",     kind:"プロダクト",       level:2, years:7 },
+  { name:"Moodle",      kind:"プロダクト",       level:2, years:5 },
+  { name:"Magento",     kind:"プロダクト",       level:1, years:3 },
 ];
 
-window.EXPERIENCES = [
-  { id:"freelance", period:"2020 —",  title:"フリーランスエンジニア", role:"engineer",
-    desc:"Webシステム開発を軸に、受託・常駐（SES）で企業の課題解決・新規事業立ち上げを支援。",
-    skills:["PHP","Laravel","Ruby","Ruby on Rails","Python","JavaScript","Vue","Flask","FastAPI"] },
-  { id:"willen", period:"2022 —",  title:"NPO法人 Willen 理事長", role:"engineer",
-    desc:"若手エンジニアのキャリア支援、市民・団体へのIT利用サポート施策を展開。",
-    skills:["Python","JavaScript"] },
-  { id:"waseda-ta", period:"2022–24", title:"早稲田大学高等学院 情報科TA", role:"educator",
-    desc:"プログラミング授業のティーチング・アシスタント。",
-    skills:["R"] },
-  { id:"nsh", period:"2021–22", title:"角川ドワンゴ学園 指導メンター", role:"educator",
-    desc:"N高・S高のオンライン・プログラミングコーチング。初学者にネットワークの仕組みまで指導。",
-    skills:["JavaScript","HTML/CSS"] },
+/* ============================================================
+   組織（org 名のリンク先。案件によっては非公開）
+   ============================================================ */
+window.ORGS = {
+  willen:  { name:"特定非営利活動法人 Willen", url:"https://ja.a-kusama.com/" },
+  waseda:  { name:"早稲田大学高等学院",        url:"https://www.waseda.jp/school/shs/" },
+  kadokawa:{ name:"角川ドワンゴ学園（N高・S高）", url:"https://nnn.ed.jp/" },
+  client:  { name:"受託・SES（クライアント非公開）", url:"" },
+};
+
+/* ============================================================
+   案件・実績（スキルシートより）
+   ・工程 phases … [要件定義, 基本設計, 詳細設計, 実装, テスト, 保守運用]
+   ・start/end … "YYYY-MM"（end 省略 = 継続中）
+   ・org … ORGS のキー
+   profile / engineer / educator の #project-explorer が、
+   フィルター＋ポップアップの実績ビューとして描画します。
+   ※ 各案件の詳細説明（散文）は今後追記予定。
+   ============================================================ */
+var PH = ["要件定義","基本設計","詳細設計","実装","テスト","保守運用"];
+window.PHASE_LABELS = PH;
+window.PROJECTS = [
+  { id:"p01", org:"client", role:"フルスタックエンジニア", cat:"engineer",
+    start:"2020-04", end:null, months:78, team:1,
+    domain:"EC・CMS・LMS・社内インフラを横断する受託／SES開発",
+    phases:[1,1,1,1,1,1],
+    stack:["PHP","Laravel","Rails","FastAPI","Flask","React","Vue","MySQL","PostgreSQL","SQLite","Linux","Apache","nginx","AWS","Azure","Moodle","Prestashop","WordPress","EC-CUBE","Magento","WooCommerce","Drupal","Google Workspace","GitHub","VS Code"] },
+  { id:"p07", org:"client", role:"リードエンジニア／マネジメント", cat:"engineer",
+    start:"2022-04", end:null, months:54, team:15, sub:5,
+    domain:"LMS（Moodle）・EC 構築を含む大規模受託開発",
+    phases:[1,1,1,1,1,1],
+    stack:["PHP","Rails","React","Vue","MySQL","nginx","AWS","Azure","Ubuntu","Moodle","Prestashop","WordPress","WooCommerce","Google Workspace"] },
+  { id:"p06", org:"client", role:"エンジニア", cat:"engineer",
+    start:"2022-01", end:"2024-09", months:33, team:5, sub:3,
+    domain:"LMS（Moodle）・EC・CMS の受託開発・運用",
+    phases:[1,1,1,1,1,1],
+    stack:["PHP","Rails","React","Vue","MySQL","Apache","nginx","AWS","Azure","GAS","Ubuntu","Redhat","Moodle","Prestashop","WordPress","EC-CUBE","WooCommerce","Google Workspace"] },
+  { id:"p05", org:"client", role:"エンジニア", cat:"engineer",
+    start:"2023-08", end:"2024-07", months:12, team:3,
+    domain:"CMS 移行・PHP 開発",
+    phases:[1,1,1,1,1,0],
+    stack:["PHP","MariaDB","Linux","VS Code","Teams"] },
+  { id:"p04", org:"client", role:"エンジニア（PM 兼務）", cat:"engineer",
+    start:"2023-10", end:"2024-02", months:5, team:1,
+    domain:"業務系 Web アプリ開発",
+    phases:[1,1,1,1,1,0],
+    stack:["PHP","Laravel","Vue","MariaDB","Linux","Slack","GitHub","VS Code"] },
+  { id:"p02", org:"client", role:"エンジニア", cat:"engineer",
+    start:"2025-01", end:"2025-04", months:4, team:11,
+    domain:"R&D／BtoBtoC 向け Web アプリ開発",
+    phases:[0,0,1,1,1,1],
+    stack:["Rails","Flask","Ruby","Python","R","SQLite","Ubuntu","VS Code","Teams","Git"] },
+  { id:"p03", org:"client", role:"エンジニア", cat:"engineer",
+    start:"2024-09", end:"2024-12", months:4, team:3,
+    domain:"AI を用いた Web アプリ開発",
+    phases:[0,0,0,1,1,1],
+    stack:["React","Vue","Python","MySQL","Linux","AWS","Slack","GitHub","VS Code"] },
+  { id:"p10", org:"client", role:"エンジニア", cat:"engineer",
+    start:"2022-12", end:"2023-04", months:5, team:3,
+    domain:"認証基盤（IdP／SSO）開発",
+    phases:[1,1,1,1,1,0],
+    stack:["Rails","React","Vue","PostgreSQL","AWS"] },
+  { id:"p11", org:"client", role:"エンジニア", cat:"engineer",
+    start:"2021-04", end:"2022-08", months:17, team:3, sub:3,
+    domain:"Web アプリ開発（Google 連携）",
+    phases:[0,0,0,1,1,1],
+    stack:["Rails","React","Vue","MySQL","AWS"] },
+  { id:"p08", org:"waseda", role:"情報科 ティーチング・アシスタント", cat:"educator",
+    start:"2022-09", end:"2024-09", months:24, team:5,
+    domain:"高校 情報科 プログラミング授業の TA（R）",
+    phases:[0,0,0,0,0,0],
+    stack:["R"] },
+  { id:"p09", org:"kadokawa", role:"プログラミング指導メンター", cat:"educator",
+    start:"2022-09", end:"2023-04", months:8, team:20,
+    domain:"N高・S高 オンライン・プログラミング指導",
+    phases:[0,0,0,0,0,0],
+    stack:["HTML/CSS","JavaScript"] },
 ];
 
 /* ============================================================
@@ -85,13 +158,15 @@ window.EXPERIENCES = [
    新規追加の記入例（先頭に足すだけ。日付順は自動整列されます）:
      { date:"2026-04-01", tag:"リリース", title:"新サービス『○○』を公開しました", url:"https://…" },
    ============================================================ */
+/* ↓ news-index.json が取得できない場合のフォールバック（slug は news/<slug>.md に対応）。
+   通常は tools/build_news.py が生成する assets/news-index.json が使われます。 */
 window.PRESS = [
-  { date:"2025-09-01", tag:"資格",   title:"高等学校 情報科の教育職員免許状が交付されました", url:"" },
-  { date:"2025-04-01", tag:"進学",   title:"明星大学 通信教育課程（教科専門コース・高校公民）に入学しました", url:"" },
-  { date:"2024-07-31", tag:"活動",   title:"早稲田大学高等学院 情報科TA（2022–2024）の任期を満了しました", url:"" },
-  { date:"2022-09-01", tag:"活動",   title:"早稲田大学高等学院にて情報科ティーチング・アシスタントに着任", url:"" },
-  { date:"2022-04-01", tag:"就任",   title:"特定非営利活動法人 Willen の理事長に就任しました", url:"" },
-  { date:"2021-04-01", tag:"受賞",   title:"早稲田大学高等学院 第72期 優秀論文作品賞を受賞", url:"" },
-  { date:"2020-04-01", tag:"独立",   title:"フリーランスエンジニアとして活動を開始しました", url:"" },
-  { date:"2019-05-01", tag:"受賞",   title:"日経STOCKリーグ 入選（日本経済新聞社）", url:"" },
+  { date:"2025-09-01", tag:"資格", slug:"license-joho-2025",       title:"高等学校 情報科の教育職員免許状が交付されました" },
+  { date:"2025-04-01", tag:"進学", slug:"meisei-2025",            title:"明星大学 通信教育課程（教科専門コース・高校公民）に入学しました" },
+  { date:"2024-07-31", tag:"活動", slug:"waseda-ta-end-2024",     title:"早稲田大学高等学院 情報科TA（2022–2024）の任期を満了しました" },
+  { date:"2022-09-01", tag:"活動", slug:"waseda-ta-2022",         title:"早稲田大学高等学院にて情報科ティーチング・アシスタントに着任" },
+  { date:"2022-04-01", tag:"就任", slug:"willen-2022",            title:"特定非営利活動法人 Willen の理事長に就任しました" },
+  { date:"2021-04-01", tag:"受賞", slug:"award-thesis-2021",      title:"早稲田大学高等学院 第72期 優秀論文作品賞を受賞" },
+  { date:"2020-04-01", tag:"独立", slug:"freelance-2020",         title:"フリーランスエンジニアとして活動を開始しました" },
+  { date:"2019-05-01", tag:"受賞", slug:"nikkei-stockleague-2019", title:"日経STOCKリーグ 入選（日本経済新聞社）" },
 ];
