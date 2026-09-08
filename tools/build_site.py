@@ -35,9 +35,9 @@ LOCALES = ("ja", "en", "de")
 
 META = {
     "index.html": {
-        "ja": ("草間 暁｜ソフトウェア開発・情報教育・研究", "草間 暁の公式ポートフォリオ。ソフトウェア開発、ITコンサルティング、情報教育、教育工学研究の経歴・実績・お知らせを紹介します。"),
-        "en": ("Akira Kusama | Software, Education & Research", "Official portfolio of Akira Kusama: software development, IT consulting, computing education, educational technology research, experience, and news."),
-        "de": ("Akira Kusama | Software, Bildung & Forschung", "Offizielles Portfolio von Akira Kusama: Softwareentwicklung, IT-Beratung, digitale Bildung, bildungstechnologische Forschung, Erfahrung und Aktuelles."),
+        "ja": ("草間 暁｜ソフトウェア開発・情報教育・研究", "草間 暁の公式ポートフォリオ。ソフトウェア開発、ITコンサルティング、情報教育、情報科学の研究の経歴・実績・お知らせを紹介します。"),
+        "en": ("Akira Kusama | Software, Education & Research", "Official portfolio of Akira Kusama: software development, IT consulting, computing education, information-science research, experience, and news."),
+        "de": ("Akira Kusama | Software, Bildung & Forschung", "Offizielles Portfolio von Akira Kusama: Softwareentwicklung, IT-Beratung, digitale Bildung, informationswissenschaftliche Forschung, Erfahrung und Aktuelles."),
     },
     "engineer.html": {
         "ja": ("ソフトウェア開発・ITコンサルティング｜草間 暁", "要件定義から設計、実装、インフラ、保守運用まで。Laravel、Ruby on Rails、OSSを活用した草間 暁のソフトウェア開発実績と対応領域。"),
@@ -50,9 +50,9 @@ META = {
         "de": ("Digitale Bildung & Programmierunterricht | Akira Kusama", "Lehrerfahrung in Informatik, Programmierung und Online-Coaching von Akira Kusama mit japanischer Lehrbefähigung für Informatik an Oberschulen."),
     },
     "researcher.html": {
-        "ja": ("情報教育・教育工学研究｜草間 暁", "北陸先端科学技術大学院大学で情報教育、教育工学、ソフトウェア、情報セキュリティを研究する草間 暁の研究関心と学術プロフィール。"),
-        "en": ("Research in Computing Education & Educational Technology | Akira Kusama", "Research interests and academic profiles of Akira Kusama at JAIST, spanning computing education, educational technology, software, and information security."),
-        "de": ("Forschung zu digitaler Bildung & Bildungstechnologie | Akira Kusama", "Forschungsinteressen und akademische Profile von Akira Kusama am JAIST zu digitaler Bildung, Bildungstechnologie, Software und Informationssicherheit."),
+        "ja": ("情報科学・ソフトウェア・情報教育の研究｜草間 暁", "北陸先端科学技術大学院大学（JAIST）先端科学技術専攻に在籍。ソフトウェア、情報セキュリティ、情報科学から情報教育まで、実務と学術を往復する草間 暁の研究関心と学術プロフィール。"),
+        "en": ("Research in Information Science, Software & Computing Education | Akira Kusama", "Research interests and academic profiles of Akira Kusama at JAIST, spanning information science, software, information security, and computing education."),
+        "de": ("Forschung zu Informatik, Software & digitaler Bildung | Akira Kusama", "Forschungsinteressen und akademische Profile von Akira Kusama am JAIST: Informatik, Software, Informationssicherheit und digitale Bildung."),
     },
     "profile.html": {
         "ja": ("経歴・案件実績・資格｜草間 暁", "草間 暁の職歴、学歴、ソフトウェア開発案件、教育実績、資格、受賞、国際交流をまとめたプロフィール。技術や参画期間で実績を検索できます。"),
