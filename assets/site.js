@@ -567,14 +567,16 @@
        ＝Cookie も送信も発生しない。選択は localStorage に保存し再表示しない。
      ・ANALYTICS.id が空の間はバナーも解析も出さない。 */
   var CONSENT_TEXT = {
-    ja: { msg:"当サイトは、アクセス解析のために Cookie を使用します。", accept:"同意する", reject:"拒否する" },
-    en: { msg:"This site uses cookies for analytics.", accept:"Accept", reject:"Reject" },
-    de: { msg:"Diese Website verwendet Cookies zur Analyse.", accept:"Akzeptieren", reject:"Ablehnen" }
+    ja: { msg:"当サイトは、アクセス解析のために Cookie を使用します。", accept:"同意する", reject:"拒否する", privacy:"プライバシーポリシー", settings:"Cookie 設定" },
+    en: { msg:"This site uses cookies for analytics.", accept:"Accept", reject:"Reject", privacy:"Privacy Policy", settings:"Cookie settings" },
+    de: { msg:"Diese Website verwendet Cookies zur Analyse.", accept:"Akzeptieren", reject:"Ablehnen", privacy:"Datenschutz", settings:"Cookie-Einstellungen" }
   };
   function initConsent() {
     var gaId = ((window.ANALYTICS && window.ANALYTICS.id) || "").trim();
     if (!gaId) return; // 解析が未設定ならバナーも出さない
     var KEY = "cookie-consent";
+    var privacyUrl = (window.PRIVACY_URL || "").trim();
+    var t = CONSENT_TEXT[SITE_LOCALE] || CONSENT_TEXT.ja;
     function get(){ try { return localStorage.getItem(KEY); } catch (e) { return null; } }
     function save(v){ try { localStorage.setItem(KEY, v); } catch (e) {} }
     var gaLoaded = false;
@@ -590,25 +592,54 @@
       gtag("js", new Date());
       gtag("config", gaId, { anonymize_ip: true });
     }
+    function clearGACookies(){
+      try {
+        document.cookie.split(";").forEach(function(c){
+          var n = c.split("=")[0].trim();
+          if (/^_ga/.test(n)) {
+            document.cookie = n + "=; Max-Age=0; path=/";
+            document.cookie = n + "=; Max-Age=0; path=/; domain=" + location.hostname;
+          }
+        });
+      } catch (e) {}
+    }
+    var bar = null;
+    function close(){ if (!bar) return; var b = bar; bar = null; b.classList.remove("show"); setTimeout(function(){ if (b.parentNode) b.parentNode.removeChild(b); }, 260); }
+    function showBanner(){
+      if (document.querySelector(".cookie-consent")) return; // 既に表示中
+      var privacyLink = privacyUrl
+        ? ' <a class="cc-link" href="' + esc(privacyUrl) + '" target="_blank" rel="noopener">' + esc(t.privacy) + "</a>"
+        : "";
+      bar = document.createElement("div");
+      bar.className = "cookie-consent";
+      bar.setAttribute("role", "dialog");
+      bar.setAttribute("aria-label", t.msg);
+      bar.innerHTML =
+        '<p class="cc-msg">' + esc(t.msg) + privacyLink + "</p>" +
+        '<div class="cc-actions">' +
+          '<button type="button" class="cc-btn cc-reject">' + esc(t.reject) + "</button>" +
+          '<button type="button" class="cc-btn cc-accept">' + esc(t.accept) + "</button>" +
+        "</div>";
+      document.body.appendChild(bar);
+      void bar.offsetHeight; // リフローを強制してからスライド表示（rAF に依存しない）
+      bar.classList.add("show");
+      bar.querySelector(".cc-accept").addEventListener("click", function(){ save("granted"); loadGA(); close(); });
+      bar.querySelector(".cc-reject").addEventListener("click", function(){ save("denied"); clearGACookies(); close(); });
+    }
+    // フッターに「設定変更（再選択）」リンクを追加
+    var colophon = document.querySelector("#site-footer .colophon");
+    if (colophon && !colophon.querySelector(".cc-settings")) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cc-settings";
+      btn.textContent = t.settings;
+      btn.addEventListener("click", showBanner);
+      colophon.appendChild(btn);
+    }
     var decision = get();
     if (decision === "granted") { loadGA(); return; } // 既に同意
-    if (decision === "denied") { return; }             // 既に拒否 → 何もしない
-    var t = CONSENT_TEXT[SITE_LOCALE] || CONSENT_TEXT.ja;
-    var bar = document.createElement("div");
-    bar.className = "cookie-consent";
-    bar.setAttribute("role", "dialog");
-    bar.setAttribute("aria-label", t.msg);
-    bar.innerHTML =
-      '<p class="cc-msg">' + esc(t.msg) + "</p>" +
-      '<div class="cc-actions">' +
-        '<button type="button" class="cc-btn cc-reject">' + esc(t.reject) + "</button>" +
-        '<button type="button" class="cc-btn cc-accept">' + esc(t.accept) + "</button>" +
-      "</div>";
-    document.body.appendChild(bar);
-    requestAnimationFrame(function(){ bar.classList.add("show"); });
-    function close(){ bar.classList.remove("show"); setTimeout(function(){ if (bar.parentNode) bar.parentNode.removeChild(bar); }, 260); }
-    bar.querySelector(".cc-accept").addEventListener("click", function(){ save("granted"); loadGA(); close(); });
-    bar.querySelector(".cc-reject").addEventListener("click", function(){ save("denied"); close(); });
+    if (decision === "denied") { return; }             // 既に拒否 → 何もしない（GA は読み込まない）
+    showBanner();
   }
 
   function init() {

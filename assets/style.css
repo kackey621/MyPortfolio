@@ -162,7 +162,7 @@ section{padding:clamp(56px,7vw,92px) 0;border-bottom:1px solid var(--rule)}
 .article{padding:clamp(48px,6vw,80px) 0;border-bottom:1px solid var(--rule)}
 .article h2{font-family:"Shippori Mincho",serif;font-weight:600;font-size:clamp(21px,2.6vw,28px);letter-spacing:.03em;margin:0 0 20px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
 .article h3{font-family:"Shippori Mincho",serif;font-weight:600;font-size:17px;letter-spacing:.02em;margin:34px 0 10px}
-.article p{margin:0 0 20px;max-width:64ch;font-size:16px;line-height:1.95}
+.article p{font-family:"Shippori Mincho",serif;margin:0 0 20px;max-width:64ch;font-size:16.5px;line-height:1.95}
 .article p:last-child{margin-bottom:0}
 .article .lead{font-family:"Shippori Mincho",serif;font-size:clamp(18px,2.1vw,20px);line-height:1.85;font-weight:500}
 .article .k{color:var(--ai);font-weight:500}
@@ -173,9 +173,9 @@ section{padding:clamp(56px,7vw,92px) 0;border-bottom:1px solid var(--rule)}
 /* ---------- profile prose grid ---------- */
 .prose-grid{display:grid;grid-template-columns:200px 1fr;gap:clamp(24px,4vw,56px)}
 @media (max-width:760px){.prose-grid{grid-template-columns:1fr;gap:20px}}
-.prose-aside{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);line-height:2.1}
+.prose-aside{font-family:"Noto Sans JP",sans-serif;font-size:13px;letter-spacing:.02em;color:var(--muted);line-height:2.0}
 .prose-aside b{display:block;color:var(--ink);font-weight:500;letter-spacing:.04em;text-transform:none;font-family:"Shippori Mincho",serif;font-size:15px;margin-bottom:14px}
-.prose p{margin:0 0 20px;max-width:64ch;font-size:16px;line-height:1.95}
+.prose p{font-family:"Shippori Mincho",serif;margin:0 0 20px;max-width:64ch;font-size:16.5px;line-height:1.95}
 .prose p:last-child{margin-bottom:0}
 .lead{font-family:"Shippori Mincho",serif;font-size:clamp(18px,2.1vw,21px);line-height:1.85;color:var(--ink);font-weight:500}
 .prose .k{color:var(--ai);font-weight:500}
@@ -191,7 +191,7 @@ section{padding:clamp(56px,7vw,92px) 0;border-bottom:1px solid var(--rule)}
 .door h3{font-family:"Shippori Mincho",serif;font-weight:600;font-size:24px;margin:16px 0 2px;letter-spacing:.04em}
 .door .role-en{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 .door .forwhom{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.03em;color:var(--ai);margin:20px 0 10px}
-.door p{margin:0 0 20px;font-size:15.5px;line-height:1.9;color:var(--ink-soft)}
+.door p{font-family:"Shippori Mincho",serif;margin:0 0 20px;font-size:16px;line-height:1.9;color:var(--ink-soft)}
 .door ul{list-style:none;margin:auto 0 0;padding:0}
 .door li{font-size:14px;line-height:1.8;color:var(--ink-soft);padding-left:16px;position:relative}
 .door li::before{content:"—";position:absolute;left:0;color:var(--shu)}
@@ -558,6 +558,10 @@ a.xp-org:hover{text-decoration:underline}
 .cc-reject:hover{border-color:var(--ink);background:var(--card)}
 .cc-accept{background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
 .cc-accept:hover{background:var(--ai);border-color:var(--ai)}
+.cc-link{color:var(--ai);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.cc-link:hover{color:var(--ai-soft)}
+.cc-settings{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.cc-settings:hover{color:var(--ai)}
 @media (max-width:600px){
   .cookie-consent{justify-content:stretch;gap:12px}
   .cc-actions{width:100%}

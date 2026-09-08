@@ -49,6 +49,9 @@ window.LINKS = [
    ============================================================ */
 window.ANALYTICS = { id: "" };
 
+/* プライバシーポリシーの URL（設定すると同意バナーにリンクを表示）。 */
+window.PRIVACY_URL = "";
+
 /* ============================================================
    スキル（フィルター用）
    ・level … 3=メイン / 2=実務あり / 1=利用可能
@@ -102,7 +105,7 @@ function anon(n){
 function anonNpo(){ return { name:"福祉サービス事業者", url:"" }; }
 
 window.PROJECTS = [
-  { id:"p01", org:{name:"フリーランス受託",url:""}, industry:"情報", role:"業務委託／受託・フルスタックエンジニア", cat:"engineer",
+  { id:"p01", org:{name:"フリーランス（Schicksal）",url:"https://www.schicksal.jp/"}, industry:"情報", role:"業務委託／受託・フルスタックエンジニア", cat:"engineer",
     start:"2020-04", end:null, months:78, team:1,
     domain:"フリーランスによるシステム開発受託",
     service:"業務基幹システム／オンラインサービス開発、情報システム導入支援、IT コンサルティング",
