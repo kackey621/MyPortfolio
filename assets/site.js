@@ -154,8 +154,7 @@
         '<div class="colophon">' +
           "<small>" + esc(SITE.name) + " ／ " + esc(SITE.nameEn) +
             " — Software Developer, Educator &amp; Researcher.</small>" +
-          "<small>Last updated " + esc(SITE.updated) +
-            " · Static site, hosted from GitHub.</small>" +
+          "<small>Last updated " + esc(SITE.updated) + ".</small>" +
         "</div>" +
       "</div>";
   }
@@ -563,6 +562,55 @@
     });
   }
 
+  /* ---------- Cookie 同意（GDPR）+ Google Analytics ----------
+     ・GA は「同意」を押したときだけ読み込む。「拒否」では一切読み込まない
+       ＝Cookie も送信も発生しない。選択は localStorage に保存し再表示しない。
+     ・ANALYTICS.id が空の間はバナーも解析も出さない。 */
+  var CONSENT_TEXT = {
+    ja: { msg:"当サイトは、アクセス解析のために Cookie を使用します。", accept:"同意する", reject:"拒否する" },
+    en: { msg:"This site uses cookies for analytics.", accept:"Accept", reject:"Reject" },
+    de: { msg:"Diese Website verwendet Cookies zur Analyse.", accept:"Akzeptieren", reject:"Ablehnen" }
+  };
+  function initConsent() {
+    var gaId = ((window.ANALYTICS && window.ANALYTICS.id) || "").trim();
+    if (!gaId) return; // 解析が未設定ならバナーも出さない
+    var KEY = "cookie-consent";
+    function get(){ try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+    function save(v){ try { localStorage.setItem(KEY, v); } catch (e) {} }
+    var gaLoaded = false;
+    function loadGA(){
+      if (gaLoaded) return; gaLoaded = true;
+      var s = document.createElement("script");
+      s.async = true;
+      s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(gaId);
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag("js", new Date());
+      gtag("config", gaId, { anonymize_ip: true });
+    }
+    var decision = get();
+    if (decision === "granted") { loadGA(); return; } // 既に同意
+    if (decision === "denied") { return; }             // 既に拒否 → 何もしない
+    var t = CONSENT_TEXT[SITE_LOCALE] || CONSENT_TEXT.ja;
+    var bar = document.createElement("div");
+    bar.className = "cookie-consent";
+    bar.setAttribute("role", "dialog");
+    bar.setAttribute("aria-label", t.msg);
+    bar.innerHTML =
+      '<p class="cc-msg">' + esc(t.msg) + "</p>" +
+      '<div class="cc-actions">' +
+        '<button type="button" class="cc-btn cc-reject">' + esc(t.reject) + "</button>" +
+        '<button type="button" class="cc-btn cc-accept">' + esc(t.accept) + "</button>" +
+      "</div>";
+    document.body.appendChild(bar);
+    requestAnimationFrame(function(){ bar.classList.add("show"); });
+    function close(){ bar.classList.remove("show"); setTimeout(function(){ if (bar.parentNode) bar.parentNode.removeChild(bar); }, 260); }
+    bar.querySelector(".cc-accept").addEventListener("click", function(){ save("granted"); loadGA(); close(); });
+    bar.querySelector(".cc-reject").addEventListener("click", function(){ save("denied"); close(); });
+  }
+
   function init() {
     buildHeader();
     initNavigation();
@@ -574,6 +622,7 @@
     renderProjectExplorer();
     buildPager();
     initTheme();
+    initConsent();
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

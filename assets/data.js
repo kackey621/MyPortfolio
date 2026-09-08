@@ -38,8 +38,16 @@ window.LINKS = [
   { label:"Blog / Notes", icon:"notes",     href:"https://notes.a-kusama.com/index.php/ja/",  ext:"↗",      roles:["educator","engineer"] },
   { label:"Instagram",    icon:"instagram", href:"https://www.instagram.com/akirakusama/",    ext:"↗",      roles:["educator"] },
   { label:"X",            icon:"x",         href:"https://x.com/akirakusamajp",              ext:"↗",      roles:["engineer","educator","researcher"] },
-  { label:"お問い合わせ", icon:"mail",      href:"https://ja.a-kusama.com/contact-me/",       ext:"MAIL ↗", roles:["engineer","educator","researcher"] },
 ];
+
+/* ============================================================
+   Google Analytics（GA4）+ GDPR 同意
+   ・id に GA4 の測定 ID（例 "G-XXXXXXXXXX"）を入れると有効化される。
+   ・id が空の間は Cookie バナーも解析も出ない（＝追跡すべきものが無い）。
+   ・同意（Accept）を押したときだけ GA を読み込む。拒否（Reject）では
+     一切読み込まない＝Cookie も送信も発生しない（site.js 参照）。
+   ============================================================ */
+window.ANALYTICS = { id: "" };
 
 /* ============================================================
    スキル（フィルター用）
