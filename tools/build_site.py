@@ -12,7 +12,7 @@ from urllib.parse import urlsplit
 from build_news import collect_news, write_index
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "https://a-kusama.com"
+BASE = "https://www.a-kusama.com"
 
 # Assets that carry a content-hash ?v= query so browsers never serve a stale
 # copy after a rebuild (a stale site.js was generating broken article links).
@@ -88,12 +88,16 @@ def seo_block(page: str, locale: str) -> str:
     og_alts = "\n".join(
         f'<meta property="og:locale:alternate" content="{value}">' for code, value in {"ja":"ja_JP","en":"en_US","de":"de_DE"}.items() if code != locale
     )
+    # Alt text for the social banner (describes the titled card, not just the photo).
+    segs = [s for s in re.split(r"\s*[|｜]\s*", title) if s not in ("草間 暁", "Akira Kusama")]
+    topic = " / ".join(segs) if segs else title
     image_alt = {
-        "ja": "ソフトウェア開発者・教育者・研究者、草間 暁のポートレート",
-        "en": "Portrait of Akira Kusama, software developer, educator, and researcher",
-        "de": "Porträt von Akira Kusama, Softwareentwickler, Pädagoge und Forscher",
+        "ja": f"「{topic}」草間 暁のアイキャッチ画像（ポートレート入り）",
+        "en": f"“{topic}” — Akira Kusama social banner with portrait",
+        "de": f"„{topic}“ — Akira Kusama Social-Banner mit Porträt",
     }[locale]
     page_type = "CollectionPage" if page == "news.html" else ("ProfilePage" if page in {"index.html", "profile.html"} else "WebPage")
+    og_image = f"{BASE}/assets/og/{page.removesuffix('.html')}-{locale}.jpg"
     graph = {
         "@context": "https://schema.org",
         "@graph": [
@@ -104,7 +108,7 @@ def seo_block(page: str, locale: str) -> str:
                 "sameAs": ["https://github.com/kackey621", "https://jp.linkedin.com/in/akira-kusama", "https://www.instagram.com/akirakusama/", "https://x.com/akirakusamajp"],
                 "knowsAbout": ["Software Development", "IT Consulting", "Computing Education", "Educational Technology", "Information Security"],
             },
-            {"@type": page_type, "@id": canonical + "#page", "url": canonical, "name": title, "description": description, "inLanguage": locale, "about": {"@id": BASE + "/#person"}},
+            {"@type": page_type, "@id": canonical + "#page", "url": canonical, "name": title, "description": description, "inLanguage": locale, "about": {"@id": BASE + "/#person"}, "primaryImageOfPage": {"@type": "ImageObject", "url": og_image, "width": 1200, "height": 630}},
             {"@type": "WebSite", "@id": BASE + "/#website", "url": BASE + "/", "name": "Akira Kusama", "alternateName": "草間 暁", "inLanguage": list(LOCALES)},
         ],
     }
@@ -115,7 +119,7 @@ def seo_block(page: str, locale: str) -> str:
 {alternates}
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="image_src" href="{BASE}/assets/akira-kusama.jpg">
+<link rel="image_src" href="{og_image}">
 <meta property="og:title" content="{html.escape(title, quote=True)}">
 <meta property="og:description" content="{html.escape(description, quote=True)}">
 <meta property="og:type" content="{'profile' if page == 'index.html' else 'website'}">
@@ -123,15 +127,16 @@ def seo_block(page: str, locale: str) -> str:
 <meta property="og:site_name" content="Akira Kusama">
 <meta property="og:locale" content="{og_locale}">
 {og_alts}
-<meta property="og:image" content="{BASE}/assets/akira-kusama.jpg">
+<meta property="og:image" content="{og_image}">
+<meta property="og:image:secure_url" content="{og_image}">
 <meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="828">
-<meta property="og:image:height" content="1104">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{html.escape(image_alt, quote=True)}">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{html.escape(title, quote=True)}">
 <meta name="twitter:description" content="{html.escape(description, quote=True)}">
-<meta name="twitter:image" content="{BASE}/assets/akira-kusama.jpg">
+<meta name="twitter:image" content="{og_image}">
 <meta name="twitter:image:alt" content="{html.escape(image_alt, quote=True)}">
 <script type="application/ld+json">{json.dumps(graph, ensure_ascii=False, separators=(',', ':'))}</script>
 <!-- SEO:END -->'''
@@ -189,10 +194,11 @@ def article_page(article: dict, locale: str, document: dict) -> str:
     article_urls = {code: BASE + ("" if code == "ja" else "/" + code) + f"/news/{slug}/" for code in LOCALES}
     og_locale={"ja":"ja_JP","en":"en_US","de":"de_DE"}[locale]
     og_alternates="\n".join(f'<meta property="og:locale:alternate" content="{value}">' for code,value in {"ja":"ja_JP","en":"en_US","de":"de_DE"}.items() if code!=locale)
-    image_alt={"ja":"ソフトウェア開発者・教育者・研究者、草間 暁のポートレート","en":"Portrait of Akira Kusama, software developer, educator, and researcher","de":"Porträt von Akira Kusama, Softwareentwickler, Pädagoge und Forscher"}[locale]
+    og_image=f"{BASE}/assets/og/news-{locale}.jpg"
+    image_alt={"ja":f"{title}｜草間 暁のお知らせ（アイキャッチ画像）","en":f"{title} — news update from Akira Kusama","de":f"{title} — Meldung von Akira Kusama"}[locale]
     ui={"ja":{"skip":"本文へスキップ","crumb":"パンくず","news":"お知らせ","published":"公開","updated":"更新","back":"お知らせ一覧へ戻る"},"en":{"skip":"Skip to content","crumb":"Breadcrumb","news":"News","published":"Published","updated":"Updated","back":"Back to news"},"de":{"skip":"Zum Inhalt springen","crumb":"Brotkrümelnavigation","news":"Aktuelles","published":"Veröffentlicht","updated":"Aktualisiert","back":"Zurück zu Aktuelles"}}[locale]
     alternates="\n".join(f'<link rel="alternate" hreflang="{code}" href="{article_urls[code]}">' for code in LOCALES)+f'\n<link rel="alternate" hreflang="x-default" href="{article_urls["ja"]}">' 
-    graph={"@context":"https://schema.org","@type":"BlogPosting","@id":canonical+"#article","url":canonical,"headline":title,"description":description,"inLanguage":locale,"datePublished":article.get("date"),"dateModified":article.get("updated") or article.get("date"),"image":BASE+"/assets/akira-kusama.jpg","author":{"@type":"Person","@id":BASE+"/#person","name":"Akira Kusama","url":BASE+"/"},"publisher":{"@id":BASE+"/#person"},"mainEntityOfPage":{"@type":"WebPage","@id":canonical}}
+    graph={"@context":"https://schema.org","@type":"BlogPosting","@id":canonical+"#article","url":canonical,"headline":title,"description":description,"inLanguage":locale,"datePublished":article.get("date"),"dateModified":article.get("updated") or article.get("date"),"image":{"@type":"ImageObject","url":og_image,"width":1200,"height":630},"author":{"@type":"Person","@id":BASE+"/#person","name":"Akira Kusama","url":BASE+"/"},"publisher":{"@id":BASE+"/#person"},"mainEntityOfPage":{"@type":"WebPage","@id":canonical}}
     updated=(f'<span><b>{ui["updated"]}</b> <time datetime="{html.escape(article["updated"])}">{html.escape(article["updated"].replace("-","."))}</time></span>' if article.get("updated") and article.get("updated")!=article.get("date") else "")
     body=fields["body"]
     return f'''<!doctype html>
@@ -219,17 +225,18 @@ def article_page(article: dict, locale: str, document: dict) -> str:
 <meta property="og:site_name" content="Akira Kusama">
 <meta property="og:locale" content="{og_locale}">
 {og_alternates}
-<meta property="og:image" content="{BASE}/assets/akira-kusama.jpg">
+<meta property="og:image" content="{og_image}">
+<meta property="og:image:secure_url" content="{og_image}">
 <meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="828"><meta property="og:image:height" content="1104">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{html.escape(image_alt,quote=True)}">
 <meta property="article:published_time" content="{html.escape(article.get('date',''))}">
 <meta property="article:modified_time" content="{html.escape(article.get('updated') or article.get('date',''))}">
 <meta property="article:section" content="{html.escape(tag,quote=True)}">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{html.escape(title,quote=True)}">
 <meta name="twitter:description" content="{html.escape(description,quote=True)}">
-<meta name="twitter:image" content="{BASE}/assets/akira-kusama.jpg">
+<meta name="twitter:image" content="{og_image}">
 <meta name="twitter:image:alt" content="{html.escape(image_alt,quote=True)}">
 <script type="application/ld+json">{json.dumps(graph,ensure_ascii=False,separators=(',',':'))}</script>
 </head>
