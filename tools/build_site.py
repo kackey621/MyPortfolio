@@ -12,7 +12,7 @@ from urllib.parse import urlsplit
 from build_news import collect_news, write_index
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "https://ja.a-kusama.com"
+BASE = "https://a-kusama.com"
 
 # Assets that carry a content-hash ?v= query so browsers never serve a stale
 # copy after a rebuild (a stale site.js was generating broken article links).
