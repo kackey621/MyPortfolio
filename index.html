@@ -3,478 +3,136 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="草間 暁（AKIRA KUSAMA）— ソフトウェア開発者・教育者・研究者。エンジニア／教育者／研究者の三つの視点から、技術・教育・研究を支えます。">
+<title>草間 暁 — AKIRA KUSAMA</title>
+<meta name="description" content="草間 暁（AKIRA KUSAMA）— ソフトウェア開発者・教育者・研究者。エンジニア／教育者／研究者の三つの視点から、技術・教育・研究を目的別に支えます。">
 <meta name="author" content="草間 暁 / AKIRA KUSAMA">
 <meta property="og:title" content="草間 暁 — AKIRA KUSAMA">
 <meta property="og:description" content="Software Developer · Educator · Researcher">
 <meta property="og:type" content="profile">
 <meta property="og:image" content="./assets/akira-kusama.jpg">
 <meta name="theme-color" content="#ECEBE4">
-<style>img{max-width:100%}[hidden]{display:none!important}html,body{margin:0}</style>
-<title>草間 暁 — 学際のプロスペクタス</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
-  :root{
-    --paper:#ECEBE4;
-    --paper-2:#E4E2D9;
-    --card:#F4F3EE;
-    --ink:#1A1B22;
-    --ink-soft:#4C4D57;
-    --ink-faint:#78798310;
-    --muted:#75766F;
-    --rule:#CBCABF;
-    --rule-soft:#D8D7CD;
-    --ai:#2C3A86;
-    --ai-soft:#43509a;
-    --shu:#A83228;
-    --plate:#DCDACE;
-    --sat:0.18;
-    --shadow:0 1px 0 rgba(26,27,34,.04);
-  }
-  @media (prefers-color-scheme:dark){
-    :root:not([data-theme="light"]){
-      --paper:#131419;
-      --paper-2:#0E0F13;
-      --card:#191A20;
-      --ink:#E9E8DF;
-      --ink-soft:#B6B6AE;
-      --muted:#84857D;
-      --rule:#2C2D34;
-      --rule-soft:#23242B;
-      --ai:#93A0E6;
-      --ai-soft:#A9B4EE;
-      --shu:#E27167;
-      --plate:#20222A;
-      --sat:0.10;
-      --shadow:0 1px 0 rgba(0,0,0,.25);
-    }
-  }
-  :root[data-theme="dark"]{
-    --paper:#131419;
-    --paper-2:#0E0F13;
-    --card:#191A20;
-    --ink:#E9E8DF;
-    --ink-soft:#B6B6AE;
-    --muted:#84857D;
-    --rule:#2C2D34;
-    --rule-soft:#23242B;
-    --ai:#93A0E6;
-    --ai-soft:#A9B4EE;
-    --shu:#E27167;
-    --plate:#20222A;
-    --sat:0.10;
-    --shadow:0 1px 0 rgba(0,0,0,.25);
-  }
-
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  body{
-    margin:0;background:var(--paper);color:var(--ink);
-    font-family:"Noto Sans JP","Newsreader",system-ui,sans-serif;
-    font-weight:400;line-height:1.85;letter-spacing:.01em;
-    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-  }
-  ::selection{background:var(--ai);color:var(--paper)}
-  a:focus-visible,button:focus-visible{outline:2px solid var(--ai);outline-offset:3px;border-radius:1px}
-
-  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
-  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
-  .eyebrow{
-    font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;
-    letter-spacing:.28em;text-transform:uppercase;color:var(--muted);
-  }
-  .serif{font-family:"Newsreader",serif}
-  .mincho{font-family:"Shippori Mincho",serif}
-  a{color:inherit}
-
-  /* ---- top bar ---- */
-  .topbar{
-    position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);
-    backdrop-filter:saturate(1.1) blur(8px);border-bottom:1px solid var(--rule);
-  }
-  .topbar .row{display:flex;align-items:center;justify-content:space-between;height:56px}
-  .brand{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.16em;font-weight:500;text-decoration:none}
-  .brand .seal{color:var(--shu)}
-  nav.toc{display:flex;gap:26px;align-items:center}
-  nav.toc a{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
-  nav.toc a:hover{color:var(--ink);border-color:var(--ai)}
-  .toc-num{color:var(--muted);margin-right:6px}
-  #themeBtn{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;color:var(--ink-soft);background:none;border:1px solid var(--rule);border-radius:2px;padding:6px 10px;cursor:pointer;transition:border-color .2s,color .2s}
-  #themeBtn:hover{color:var(--ink);border-color:var(--ai)}
-  @media (max-width:760px){nav.toc a:not(.tab-persist){display:none}}
-
-  /* ---- hero / frontispiece ---- */
-  .hero{padding:clamp(48px,7vw,88px) 0 clamp(40px,5vw,64px);border-bottom:1px solid var(--rule)}
-  .hero-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:clamp(32px,5vw,68px);align-items:end}
-  @media (max-width:860px){.hero-grid{grid-template-columns:1fr;align-items:start;gap:36px}}
-  .hero .eyebrow{margin-bottom:26px}
-  .name-jp{font-family:"Shippori Mincho",serif;font-weight:600;font-size:clamp(52px,9vw,104px);line-height:.98;letter-spacing:.04em;margin:0}
-  .name-en{font-family:"Newsreader",serif;font-style:italic;font-weight:400;font-size:clamp(20px,3vw,30px);color:var(--ink-soft);margin:14px 0 0;letter-spacing:.01em}
-  .thesis{font-family:"Newsreader",serif;font-size:clamp(21px,2.6vw,30px);line-height:1.42;font-weight:400;margin:34px 0 0;max-width:20ch;text-wrap:balance}
-  .thesis .u{border-bottom:2px solid var(--shu);padding-bottom:2px}
-  .thesis-jp{font-family:"Shippori Mincho",serif;font-size:15px;color:var(--ink-soft);margin:16px 0 0;line-height:1.9;max-width:34ch}
-  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
-  .btn{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:12px 20px;border-radius:2px;transition:all .2s}
-  .btn-primary{background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
-  .btn-primary:hover{background:var(--ai);border-color:var(--ai)}
-  .btn-ghost{color:var(--ink);border:1px solid var(--rule)}
-  .btn-ghost:hover{border-color:var(--ai);color:var(--ai)}
-
-  /* portrait plate */
-  .plate{position:relative}
-  .plate figure{margin:0;position:relative;padding:10px;background:var(--card);border:1px solid var(--rule);box-shadow:var(--shadow)}
-  .plate img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;filter:grayscale(calc(1 - var(--sat))) contrast(1.02);transition:filter .5s ease}
-  .plate figure:hover img{filter:grayscale(0) contrast(1)}
-  @media (prefers-reduced-motion:reduce){.plate img{transition:none}}
-  .plate .frameline{position:absolute;inset:4px;border:1px solid var(--rule-soft);pointer-events:none;z-index:2}
-  .plate figcaption{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:12px;display:flex;justify-content:space-between}
-  .plate .seal{position:absolute;right:-14px;top:-14px;width:56px;height:56px;border:1.5px solid var(--shu);border-radius:50%;display:grid;place-items:center;background:var(--paper);z-index:3;transform:rotate(-8deg)}
-  .plate .seal span{font-family:"Shippori Mincho",serif;color:var(--shu);font-size:20px;font-weight:700;line-height:1}
-
-  /* ---- section scaffolding ---- */
-  section{padding:clamp(56px,7vw,92px) 0;border-bottom:1px solid var(--rule)}
-  .sec-head{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:baseline;margin-bottom:clamp(34px,4vw,52px)}
-  .sec-idx{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.1em;color:var(--shu)}
-  .sec-title{margin:0;font-family:"Shippori Mincho",serif;font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:.03em;line-height:1.2;text-wrap:balance}
-  .sec-title .en{display:block;font-family:"Newsreader",serif;font-style:italic;font-weight:400;font-size:clamp(14px,1.6vw,17px);color:var(--muted);letter-spacing:.02em;margin-top:8px}
-
-  /* ---- profile prose ---- */
-  .prose-grid{display:grid;grid-template-columns:200px 1fr;gap:clamp(24px,4vw,56px)}
-  @media (max-width:760px){.prose-grid{grid-template-columns:1fr;gap:20px}}
-  .prose-aside{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);line-height:2.1}
-  .prose-aside b{display:block;color:var(--ink);font-weight:500;letter-spacing:.04em;text-transform:none;font-family:"Shippori Mincho",serif;font-size:15px;margin-bottom:14px}
-  .prose p{margin:0 0 20px;max-width:64ch;font-size:16px;line-height:1.95}
-  .prose p:last-child{margin-bottom:0}
-  .lead{font-family:"Shippori Mincho",serif;font-size:clamp(18px,2.1vw,21px)!important;line-height:1.85!important;color:var(--ink);font-weight:500}
-  .prose .k{color:var(--ai);font-weight:500}
-
-  /* ---- 目的別 doorways ---- */
-  .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule)}
-  @media (max-width:860px){.doors{grid-template-columns:1fr}}
-  .door{padding:32px 30px 30px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);position:relative;transition:background .25s;text-decoration:none;color:inherit;display:flex;flex-direction:column}
-  .door:nth-child(3n){border-right:none}
-  @media (max-width:860px){.door{border-right:none}}
-  .door:hover{background:var(--card)}
-  .door .rn{font-family:"Newsreader",serif;font-size:15px;color:var(--shu);letter-spacing:.1em}
-  .door h3{font-family:"Shippori Mincho",serif;font-weight:600;font-size:24px;margin:16px 0 2px;letter-spacing:.04em}
-  .door .role-en{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-  .door .forwhom{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;color:var(--ai);margin:20px 0 10px}
-  .door p{margin:0 0 20px;font-size:14.5px;line-height:1.9;color:var(--ink-soft)}
-  .door ul{list-style:none;margin:auto 0 0;padding:0}
-  .door li{font-size:13px;line-height:1.75;color:var(--ink-soft);padding-left:16px;position:relative}
-  .door li::before{content:"—";position:absolute;left:0;color:var(--shu)}
-  .door .enter{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-top:20px;color:var(--ink);display:inline-flex;gap:8px;align-items:center}
-  .door .enter .arw{transition:transform .2s}
-  .door:hover .enter .arw{transform:translateX(4px);color:var(--ai)}
-
-  /* ---- capability spec sheet ---- */
-  .caps{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(20px,3vw,40px)}
-  @media (max-width:760px){.caps{grid-template-columns:1fr}}
-  .cap{border-top:2px solid var(--ink);padding-top:18px}
-  .cap h4{margin:0 0 4px;font-family:"Shippori Mincho",serif;font-size:19px;font-weight:600;letter-spacing:.03em}
-  .cap .cap-en{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
-  .spec{width:100%;border-collapse:collapse;font-size:13.5px}
-  .spec tr{border-bottom:1px solid var(--rule-soft)}
-  .spec th{text-align:left;font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:11px 0;width:120px;vertical-align:top}
-  .spec td{padding:11px 0;color:var(--ink);vertical-align:top}
-  .chip{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.02em;padding:2px 9px;margin:2px 5px 2px 0;border:1px solid var(--rule);border-radius:2px;background:var(--card)}
-  .chip.pri{border-color:var(--ai);color:var(--ai);font-weight:500}
-  .chip.pri::before{content:"●";font-size:7px;vertical-align:2px;margin-right:6px;color:var(--ai)}
-  .cap-legend{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.04em;color:var(--muted);margin:0 0 22px}
-  .cap-legend b{color:var(--ai);font-weight:500}
-  .cap-note{font-size:13px;color:var(--ink-soft);line-height:1.85;margin:16px 0 0;max-width:52ch}
-
-  /* ---- timeline ---- */
-  .tl{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px)}
-  @media (max-width:760px){.tl{grid-template-columns:1fr;gap:40px}}
-  .tl h4{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--shu);margin:0 0 22px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
-  .ev{display:grid;grid-template-columns:88px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--rule-soft)}
-  .ev:last-child{border-bottom:none}
-  .ev .yr{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:.02em;padding-top:3px;font-variant-numeric:tabular-nums}
-  .ev .what b{display:block;font-family:"Shippori Mincho",serif;font-weight:600;font-size:15.5px;letter-spacing:.02em;margin-bottom:3px}
-  .ev .what span{font-size:13px;color:var(--ink-soft);line-height:1.7}
-
-  /* ---- credentials ---- */
-  .cred{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,36px)}
-  @media (max-width:760px){.cred{grid-template-columns:1fr}}
-  .cred-col h4{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--shu);margin:0 0 16px}
-  .cred-col ul{list-style:none;margin:0;padding:0}
-  .cred-col li{padding:12px 0;border-bottom:1px solid var(--rule-soft);font-size:14px;line-height:1.7}
-  .cred-col li .yr{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px}
-
-  /* ---- footer / colophon ---- */
-  footer{padding:clamp(56px,7vw,88px) 0 48px;background:var(--paper-2)}
-  .foot-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:start}
-  @media (max-width:760px){.foot-grid{grid-template-columns:1fr;gap:32px}}
-  .foot-lead{font-family:"Shippori Mincho",serif;font-size:clamp(20px,2.6vw,28px);line-height:1.6;font-weight:600;margin:0 0 8px;letter-spacing:.02em;text-wrap:balance}
-  .foot-sub{font-size:14px;color:var(--ink-soft);max-width:44ch;margin:0}
-  .foot-links{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
-  .foot-links a{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;text-decoration:none;color:var(--ink);padding:9px 0;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;transition:color .2s,border-color .2s}
-  .foot-links a:hover{color:var(--ai);border-color:var(--ai)}
-  .foot-links a .ext{color:var(--muted);font-size:10px}
-  .colophon{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;margin-top:clamp(40px,6vw,68px);padding-top:24px;border-top:1px solid var(--rule)}
-  .colophon .fseal{width:38px;height:38px;border:1.4px solid var(--shu);border-radius:50%;display:grid;place-items:center;transform:rotate(-8deg);flex:none}
-  .colophon .fseal span{font-family:"Shippori Mincho",serif;color:var(--shu);font-size:15px;font-weight:700}
-  .colophon small{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);line-height:1.8}
-
-  .fade{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
-  .fade.d1{animation-delay:.06s}.fade.d2{animation-delay:.12s}.fade.d3{animation-delay:.18s}
-  @keyframes rise{to{opacity:1;transform:none}}
-  @media (prefers-reduced-motion:reduce){.fade{animation:none;opacity:1;transform:none}}
-</style>
+<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="wrap row">
-    <a class="brand" href="#top">草間 暁 <span class="seal">◈</span> A.KUSAMA</a>
-    <nav class="toc">
-      <a href="#profile"><span class="toc-num">01</span>自己紹介</a>
-      <a href="#roles"><span class="toc-num">02</span>目的別</a>
-      <a href="#skills"><span class="toc-num">03</span>できること</a>
-      <a href="#career"><span class="toc-num">04</span>経歴</a>
-      <a href="#contact" class="tab-persist"><span class="toc-num">05</span>連絡</a>
-      <button id="themeBtn" aria-label="配色を切り替え">◐ THEME</button>
-    </nav>
-  </div>
-</header>
+<a class="skip" href="#main">本文へスキップ</a>
+<header id="site-header"></header>
 
-<a id="top"></a>
-<div class="hero">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <p class="eyebrow fade">Software Developer &nbsp;·&nbsp; Educator &nbsp;·&nbsp; Researcher</p>
-        <h1 class="name-jp fade d1">草間 暁</h1>
-        <p class="name-en fade d1">Akira&nbsp;Kusama</p>
-        <p class="thesis fade d2">Empower everyone to <span class="u">achieve more</span>.</p>
-        <p class="thesis-jp fade d2">より多くの人が、より多くを成し遂げられる社会へ。<br>技術・教育・研究の三つの視点から、その一歩を支えます。</p>
-        <div class="hero-cta fade d3">
-          <a class="btn btn-primary" href="#roles">目的別に見る →</a>
-          <a class="btn btn-ghost" href="#contact">ご相談・お問い合わせ</a>
+<main id="main">
+  <div class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow fade">Software Developer &nbsp;·&nbsp; Educator &nbsp;·&nbsp; Researcher</p>
+          <h1 class="name-jp fade d1">草間 暁</h1>
+          <p class="name-en fade d1">Akira&nbsp;Kusama</p>
+          <p class="thesis fade d2">Empower everyone to <span class="u">achieve more</span>.</p>
+          <p class="thesis-jp fade d2">より多くの人が、より多くを成し遂げられる社会へ。<br>技術・教育・研究の三つの視点から、その一歩を支えます。</p>
+          <div class="hero-cta fade d3">
+            <a class="btn btn-primary" href="#roles">目的別に見る →</a>
+            <a class="btn btn-ghost" href="profile.html">経歴を見る</a>
+          </div>
+        </div>
+        <div class="plate fade d2">
+          <figure>
+            <div class="frameline"></div>
+            <img src="./assets/akira-kusama.jpg" alt="草間 暁のポートレート" width="828" height="1104">
+            <div class="seal" title="落款"><span>暁</span></div>
+          </figure>
+          <figcaption><span>KUSAMA, Akira</span><span>Est. 2020 — Freelance</span></figcaption>
         </div>
       </div>
-      <div class="plate fade d2">
-        <figure>
-          <div class="frameline"></div>
-          <img src="./assets/akira-kusama.jpg" alt="草間 暁のポートレート">
-          <div class="seal" title="落款"><span>暁</span></div>
-        </figure>
-        <figcaption><span>KUSAMA, Akira</span><span>Est. 2020 — Freelance</span></figcaption>
-      </div>
     </div>
   </div>
-</div>
-
-<main class="wrap">
 
   <!-- 01 自己紹介 -->
-  <section id="profile">
-    <div class="sec-head">
-      <div class="sec-idx">§ 01</div>
-      <h2 class="sec-title">自己紹介<span class="en">Introduction — who I am, and how I think</span></h2>
-    </div>
-    <div class="prose-grid">
-      <aside class="prose-aside">
-        <b>草間 暁<br>KUSAMA, Akira</b>
-        特定非営利活動法人<br>Willen 理事長<br><br>
-        フリーランス<br>エンジニア／情報科教員／講師<br><br>
-        JAIST 先端科学技術専攻<br>（在学中）
-      </aside>
-      <div class="prose">
-        <p class="lead">技術は目的ではなく、手段です。私が向き合うのは、その先にある「人が何かを成し遂げられること」——ビジネスの成功であり、学びの手応えであり、新しい問いの発見です。</p>
-        <p>Webシステム開発を専門とするフリーランスエンジニアとして、企業の課題解決と新規事業の立ち上げを支援しています。同時に、非営利活動法人 <span class="k">Willen</span> の理事長として、若手エンジニアのキャリア支援や、市民・団体へのIT利用サポートに取り組んできました。</p>
-        <p>2025年には高等学校・情報科の教育職員免許を取得し、教育者としての活動も本格化しています。加えて <span class="k">北陸先端科学技術大学院大学（JAIST）</span> で研究に携わり、技術・教育・研究という三つの立場を往復しながら、それぞれの現場に橋を架けることを自分の役割だと考えています。</p>
-        <p>高校時代の「トビタテ！留学JAPAN」日本代表としての欧州インターン、ウィーンでの市民交流などを通じて培った、異なる背景の人と対話し協働する姿勢が、いまの仕事の土台になっています。</p>
+  <section id="profile-intro">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-idx">§ 01</div>
+        <h2 class="sec-title">自己紹介<span class="en">Introduction — who I am, and how I think</span></h2>
+      </div>
+      <div class="prose-grid">
+        <aside class="prose-aside">
+          <b>草間 暁<br>KUSAMA, Akira</b>
+          特定非営利活動法人<br>Willen 理事長<br><br>
+          フリーランス<br>エンジニア／情報科教員／講師<br><br>
+          JAIST 先端科学技術専攻<br>（在学中）
+        </aside>
+        <div class="prose">
+          <p class="lead">技術は目的ではなく、手段です。私が向き合うのは、その先にある「人が何かを成し遂げられること」——ビジネスの成功であり、学びの手応えであり、新しい問いの発見です。</p>
+          <p>Webシステム開発を専門とするフリーランスエンジニアとして、企業の課題解決と新規事業の立ち上げを支援しています。同時に、非営利活動法人 <span class="k">Willen</span> の理事長として、若手エンジニアのキャリア支援や、市民・団体へのIT利用サポートに取り組んできました。2025年には高等学校・情報科の教育職員免許を取得し、<span class="k">北陸先端科学技術大学院大学（JAIST）</span> で研究にも携わっています。</p>
+          <p>技術・教育・研究という三つの立場を往復しながら、それぞれの現場に橋を架けることを、自分の役割だと考えています。詳しい歩みは<a class="k" href="profile.html">経歴ページ</a>にまとめています。</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- 02 目的別 -->
   <section id="roles">
-    <div class="sec-head">
-      <div class="sec-idx">§ 02</div>
-      <h2 class="sec-title">目的別の、三つの顔<span class="en">Three doorways — choose the one that fits your purpose</span></h2>
-    </div>
-    <div class="doors">
-      <a class="door" href="#skills">
-        <div class="rn">I.</div>
-        <h3>エンジニア</h3>
-        <div class="role-en">For Business</div>
-        <div class="forwhom">▸ システム開発をお考えの方へ</div>
-        <p>「専門用語ばかりで誰に頼めばいいか分からない」——そんな不安に、経営の視点で応えます。事業フェーズに合わせて技術を選び、作って終わりにしない設計と、透明性の高いコミュニケーションでご一緒します。</p>
-        <ul>
-          <li>Laravel / Rails / OSS の戦略的な使い分け</li>
-          <li>要件定義から保守運用までの伴走</li>
-          <li>DXツール・BtoC サービスまで幅広く対応</li>
-        </ul>
-        <span class="enter">できることを見る <span class="arw">→</span></span>
-      </a>
-      <a class="door" href="#career">
-        <div class="rn">II.</div>
-        <h3>教育者</h3>
-        <div class="role-en">For Education</div>
-        <div class="forwhom">▸ 情報教育に携わる方へ</div>
-        <p>高等学校・情報科教員免許を保有。N高・S高でのプログラミング指導メンター、早稲田大学高等学院でのTAなど、初学者に「伝わる」授業を追求してきました。教授法そのものを研究対象としています。</p>
-        <ul>
-          <li>情報I／情報工学・コーディング指導</li>
-          <li>オンライン・コーチングの設計と実践</li>
-          <li>デジタル推進委員としての普及活動</li>
-        </ul>
-        <span class="enter">指導歴を見る <span class="arw">→</span></span>
-      </a>
-      <a class="door" href="#contact">
-        <div class="rn">III.</div>
-        <h3>研究者</h3>
-        <div class="role-en">For Academia</div>
-        <div class="forwhom">▸ 研究・共同研究をお考えの方へ</div>
-        <p>北陸先端科学技術大学院大学（JAIST）先端科学技術専攻に在籍。情報技術と教育の交差する領域に関心を持ち、実務と学術の双方から知見を積み重ねています。業績は researchmap・ORCID にて公開。</p>
-        <ul>
-          <li>情報教育・教育工学への関心</li>
-          <li>researchmap / ORCID で業績を公開</li>
-          <li>共同研究・登壇のご相談を歓迎</li>
-        </ul>
-        <span class="enter">連絡先へ <span class="arw">→</span></span>
-      </a>
-    </div>
-  </section>
-
-  <!-- 03 できること -->
-  <section id="skills">
-    <div class="sec-head">
-      <div class="sec-idx">§ 03</div>
-      <h2 class="sec-title">できること<span class="en">Capabilities — a working specification</span></h2>
-    </div>
-    <p class="cap-legend"><b>●</b> 実務経験あり（メイン）　／　枠線のみ = 利用可能</p>
-    <div class="caps">
-      <div class="cap">
-        <h4>開発</h4>
-        <div class="cap-en">Software Development</div>
-        <table class="spec">
-          <tr><th>言語</th><td>
-            <span class="chip pri">PHP</span><span class="chip pri">Ruby</span><span class="chip pri">Python</span>
-            <span class="chip">JavaScript</span>
-          </td></tr>
-          <tr><th>フレームワーク</th><td>
-            <span class="chip pri">Laravel</span><span class="chip pri">Ruby on Rails</span>
-            <span class="chip">Flask</span><span class="chip">FastAPI</span><span class="chip">Vue</span>
-          </td></tr>
-          <tr><th>領域</th><td>基幹システム／マッチングサイト／MVP開発／DXツール／BtoC Webサービス</td></tr>
-          <tr><th>強み</th><td>長期運用を見据えた設計と保守。低予算にはOSS（WordPress・EC-CUBE 等）で最適解を提案。</td></tr>
-        </table>
-        <p class="cap-note">堅牢性の Laravel、スピードの Rails、コストの OSS。目的に応じて手段を選ぶことを、選定理由から丁寧に説明します。</p>
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-idx">§ 02</div>
+        <h2 class="sec-title">目的別の、三つの顔<span class="en">Three doorways — choose the one that fits your purpose</span></h2>
       </div>
-      <div class="cap">
-        <h4>教育・研究</h4>
-        <div class="cap-en">Teaching &amp; Research</div>
-        <table class="spec">
-          <tr><th>資格</th><td>高等学校 情報科 教育職員免許（2025）／基本情報技術者（2019）</td></tr>
-          <tr><th>指導言語</th><td>
-            <span class="chip">JavaScript</span><span class="chip">HTML/CSS</span><span class="chip">R</span><span class="chip">Python</span>
-          </td></tr>
-          <tr><th>指導対象</th><td>初学者〜高校生。情報I・情報工学・プログラミングのメンタリング。</td></tr>
-          <tr><th>研究発信</th><td>researchmap ／ ORCID にて業績公開。JAIST 在籍。</td></tr>
-        </table>
-        <p class="cap-note">「伝わらない」を無くす。実務で使う技術を、初学者にも届く言葉に翻訳することを得意とします。</p>
+      <div class="doors">
+        <a class="door" href="engineer.html">
+          <div class="rn">I.</div>
+          <h3>エンジニア</h3>
+          <div class="role-en">For Business</div>
+          <div class="forwhom">▸ システム開発をお考えの方へ</div>
+          <p>経営の視点で技術を選び、作って終わりにしない設計と、透明性の高いコミュニケーションでご一緒します。要件定義から保守運用まで。</p>
+          <ul>
+            <li>Laravel / Rails / OSS の戦略的な使い分け</li>
+            <li>DXツール・BtoC サービスまで幅広く</li>
+          </ul>
+          <span class="enter">詳しく見る <span class="arw">→</span></span>
+        </a>
+        <a class="door" href="educator.html">
+          <div class="rn">II.</div>
+          <h3>教育者</h3>
+          <div class="role-en">For Education</div>
+          <div class="forwhom">▸ 情報教育に携わる方へ</div>
+          <p>高等学校・情報科教員免許を保有。初学者に「伝わる」授業を追求し、教授法そのものを研究対象としています。</p>
+          <ul>
+            <li>情報I／情報工学・コーディング指導</li>
+            <li>オンライン・コーチングの設計と実践</li>
+          </ul>
+          <span class="enter">詳しく見る <span class="arw">→</span></span>
+        </a>
+        <a class="door" href="researcher.html">
+          <div class="rn">III.</div>
+          <h3>研究者</h3>
+          <div class="role-en">For Academia</div>
+          <div class="forwhom">▸ 研究・共同研究をお考えの方へ</div>
+          <p>JAIST 先端科学技術専攻に在籍。情報技術と教育の交差領域に関心を持ち、実務と学術の双方から知見を重ねています。</p>
+          <ul>
+            <li>情報教育・教育工学への関心</li>
+            <li>researchmap / ORCID で業績を公開</li>
+          </ul>
+          <span class="enter">詳しく見る <span class="arw">→</span></span>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- 04 経歴 -->
-  <section id="career">
-    <div class="sec-head">
-      <div class="sec-idx">§ 04</div>
-      <h2 class="sec-title">経歴<span class="en">Career &amp; Education — the record</span></h2>
-    </div>
-    <div class="tl">
-      <div>
-        <h4>Professional · 職歴</h4>
-        <div class="ev"><div class="yr">2022 —</div><div class="what"><b>特定非営利活動法人 Willen　理事長</b><span>若手エンジニアのキャリアアップ支援、市民・団体へのIT利用サポート施策を展開。</span></div></div>
-        <div class="ev"><div class="yr">2020 —</div><div class="what"><b>フリーランスエンジニア</b><span>Web システム開発を軸に、企業の課題解決・新規事業立ち上げを受託・常駐（SES）にて支援。</span></div></div>
-        <div class="ev"><div class="yr">2022–24</div><div class="what"><b>早稲田大学高等学院　情報科 TA</b><span>プログラミング授業のティーチング・アシスタント（R）。</span></div></div>
-        <div class="ev"><div class="yr">2021–22</div><div class="what"><b>角川ドワンゴ学園（N高・S高）　指導メンター</b><span>オンライン・プログラミングコーチング（JavaScript / HTML / CSS）。</span></div></div>
+  <!-- 03 お知らせ（最新5件を JS で自動描画） -->
+  <section id="news">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-idx">§ 03</div>
+        <h2 class="sec-title">お知らせ<span class="en">Latest news &amp; press — five most recent</span></h2>
       </div>
-      <div>
-        <h4>Academic · 学歴</h4>
-        <div class="ev"><div class="yr">在学中</div><div class="what"><b>北陸先端科学技術大学院大学（JAIST）</b><span>先端科学技術専攻（修士課程）。</span></div></div>
-        <div class="ev"><div class="yr">2025 —</div><div class="what"><b>明星大学 通信教育課程</b><span>教科専門コース（高校・公民）。</span></div></div>
-        <div class="ev"><div class="yr">卒業</div><div class="what"><b>早稲田大学 基幹理工学部</b><span>情報理工学科。</span></div></div>
-        <div class="ev"><div class="yr">卒業</div><div class="what"><b>早稲田大学高等学院</b><span>トビタテ！留学JAPAN 高校生日本代表（エストニア・ドイツ）／ウィーン市民交流派遣。</span></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 05 資格・受賞 -->
-  <section id="credentials">
-    <div class="sec-head">
-      <div class="sec-idx">§ 05</div>
-      <h2 class="sec-title">資格・受賞<span class="en">Credentials &amp; Honors</span></h2>
-    </div>
-    <div class="cred">
-      <div class="cred-col">
-        <h4>免許・資格</h4>
-        <ul>
-          <li>高等学校 情報科 教育職員免許<span class="yr">2025.09</span></li>
-          <li>基本情報技術者（PBT）<span class="yr">2019.05</span></li>
-          <li>デジタル推進委員<span class="yr">— 総務省</span></li>
-        </ul>
-      </div>
-      <div class="cred-col">
-        <h4>受賞</h4>
-        <ul>
-          <li>優秀論文作品賞　早稲田大学高等学院<span class="yr">2021</span></li>
-          <li>日経STOCKリーグ 入選　日本経済新聞<span class="yr">2019</span></li>
-          <li>税の作文 府中市優秀賞<span class="yr">2017</span></li>
-        </ul>
-      </div>
-      <div class="cred-col">
-        <h4>国際交流</h4>
-        <ul>
-          <li>トビタテ！留学JAPAN 高校生代表<span class="yr">Estonia / Germany</span></li>
-          <li>Japan Society Junior Fellow<span class="yr">2020</span></li>
-          <li>府中市 × ウィーン・ヘルナルス区 派遣<span class="yr">Vienna</span></li>
-        </ul>
-      </div>
+      <div data-press data-press-limit="5"></div>
+      <div class="sec-more"><a href="news.html">すべてのお知らせ →</a></div>
     </div>
   </section>
 </main>
 
-<!-- contact / colophon -->
-<footer id="contact">
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <p class="foot-lead">まずは、実現したい未来について<br>お聞かせください。</p>
-        <p class="foot-sub">具体的な仕様が決まっていなくても構いません。開発・教育・研究のいずれのご相談も、プロフェッショナルとしての知見を交えて、最適なロードマップを一緒に描きます。</p>
-      </div>
-      <nav class="foot-links" aria-label="外部リンク">
-        <a href="https://ja.a-kusama.com/contact-me/">お問い合わせ <span class="ext">MAIL ↗</span></a>
-        <a href="https://github.com/kackey621">GitHub <span class="ext">↗</span></a>
-        <a href="https://x.com/akirakusamajp">X (Twitter) <span class="ext">↗</span></a>
-        <a href="https://www.instagram.com/akirakusama/">Instagram <span class="ext">↗</span></a>
-        <a href="https://notes.a-kusama.com/index.php/ja/">Blog / Notes <span class="ext">↗</span></a>
-        <a href="https://ja.a-kusama.com/researcher/">researchmap · ORCID <span class="ext">↗</span></a>
-      </nav>
-    </div>
-    <div class="colophon">
-      <div class="fseal"><span>暁</span></div>
-      <small>草間 暁 ／ AKIRA KUSAMA — Software Developer, Educator &amp; Researcher.</small>
-      <small>Set in Shippori Mincho, Newsreader &amp; IBM Plex Mono. Static site, hosted from GitHub.</small>
-    </div>
-  </div>
-</footer>
-
-<script>
-  (function(){
-    var root=document.documentElement, btn=document.getElementById('themeBtn');
-    function sysDark(){return window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;}
-    function cur(){var t=root.getAttribute('data-theme');return t?t:(sysDark()?'dark':'light');}
-    btn.addEventListener('click',function(){
-      root.setAttribute('data-theme', cur()==='dark'?'light':'dark');
-    });
-  })();
-</script>
+<footer id="site-footer"></footer>
+<script src="assets/data.js"></script>
+<script src="assets/site.js"></script>
 </body>
 </html>
