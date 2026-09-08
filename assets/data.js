@@ -28,14 +28,52 @@ window.NAV = [
 /* 目的別ページの前後リンク（pager 自動生成用の順序） */
 window.ROLE_ORDER = ["engineer.html","educator.html","researcher.html"];
 
-/* 外部リンク（フッターに自動描画） */
+/* 外部リンク（フッターは全件、各役割ページは roles で絞り込み自動表示）
+   roles: "engineer" / "educator" / "researcher" のうち、その項目に合うものを列挙 */
 window.LINKS = [
-  { label:"お問い合わせ",        href:"https://ja.a-kusama.com/contact-me/", ext:"MAIL ↗" },
-  { label:"GitHub",              href:"https://github.com/kackey621",        ext:"↗" },
-  { label:"X (Twitter)",         href:"https://x.com/akirakusamajp",         ext:"↗" },
-  { label:"Instagram",           href:"https://www.instagram.com/akirakusama/", ext:"↗" },
-  { label:"Blog / Notes",        href:"https://notes.a-kusama.com/index.php/ja/", ext:"↗" },
-  { label:"researchmap · ORCID", href:"https://ja.a-kusama.com/researcher/",  ext:"↗" },
+  { label:"GitHub",       href:"https://github.com/kackey621",             ext:"↗",      roles:["engineer"] },
+  { label:"researchmap",  href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
+  { label:"ORCID",        href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
+  { label:"Blog / Notes", href:"https://notes.a-kusama.com/index.php/ja/",  ext:"↗",      roles:["educator","engineer"] },
+  { label:"Instagram",    href:"https://www.instagram.com/akirakusama/",    ext:"↗",      roles:["educator"] },
+  { label:"X (Twitter)",  href:"https://x.com/akirakusamajp",              ext:"↗",      roles:["engineer","educator","researcher"] },
+  { label:"お問い合わせ", href:"https://ja.a-kusama.com/contact-me/",       ext:"MAIL ↗", roles:["engineer","educator","researcher"] },
+];
+
+/* ============================================================
+   スキル × 経歴（skill-career explorer 用）
+   ・SKILLS … スキルとレベル（3=メイン / 2=実務あり / 1=利用可能）
+   ・EXPERIENCES … 経歴と、そこで使用したスキル（name で SKILLS と対応）
+   profile.html の #skill-explorer が、site.js により
+   「クリックで双方向に絞り込める一画面ビュー」として描画します。
+   ============================================================ */
+window.SKILLS = [
+  { name:"PHP",           kind:"言語",         level:3 },
+  { name:"Ruby",          kind:"言語",         level:3 },
+  { name:"Python",        kind:"言語",         level:2 },
+  { name:"JavaScript",    kind:"言語",         level:2 },
+  { name:"HTML/CSS",      kind:"言語",         level:2 },
+  { name:"R",             kind:"言語",         level:1 },
+  { name:"Laravel",       kind:"フレームワーク", level:3 },
+  { name:"Ruby on Rails", kind:"フレームワーク", level:3 },
+  { name:"Vue",           kind:"フレームワーク", level:1 },
+  { name:"Flask",         kind:"フレームワーク", level:1 },
+  { name:"FastAPI",       kind:"フレームワーク", level:1 },
+];
+
+window.EXPERIENCES = [
+  { id:"freelance", period:"2020 —",  title:"フリーランスエンジニア", role:"engineer",
+    desc:"Webシステム開発を軸に、受託・常駐（SES）で企業の課題解決・新規事業立ち上げを支援。",
+    skills:["PHP","Laravel","Ruby","Ruby on Rails","Python","JavaScript","Vue","Flask","FastAPI"] },
+  { id:"willen", period:"2022 —",  title:"NPO法人 Willen 理事長", role:"engineer",
+    desc:"若手エンジニアのキャリア支援、市民・団体へのIT利用サポート施策を展開。",
+    skills:["Python","JavaScript"] },
+  { id:"waseda-ta", period:"2022–24", title:"早稲田大学高等学院 情報科TA", role:"educator",
+    desc:"プログラミング授業のティーチング・アシスタント。",
+    skills:["R"] },
+  { id:"nsh", period:"2021–22", title:"角川ドワンゴ学園 指導メンター", role:"educator",
+    desc:"N高・S高のオンライン・プログラミングコーチング。初学者にネットワークの仕組みまで指導。",
+    skills:["JavaScript","HTML/CSS"] },
 ];
 
 /* ============================================================

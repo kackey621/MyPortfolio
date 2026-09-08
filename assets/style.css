@@ -240,6 +240,59 @@ footer{padding:clamp(56px,7vw,88px) 0 48px;background:var(--paper-2)}
 .colophon .fseal span{font-family:"Shippori Mincho",serif;color:var(--shu);font-size:15px;font-weight:700}
 .colophon small{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);line-height:1.8}
 
+/* ---------- role-specific links ---------- */
+.rolelinks{margin-top:8px}
+.rl-head{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--shu);margin-bottom:14px}
+.rl-list{display:flex;flex-wrap:wrap;gap:10px}
+a.rl{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.03em;border:1px solid var(--rule);border-radius:2px;padding:9px 14px;transition:border-color .2s,color .2s,background .2s}
+a.rl:hover{border-color:var(--ai);color:var(--ai);background:var(--card)}
+a.rl .rl-ext{color:var(--muted);font-size:10px}
+a.rl:hover .rl-ext{color:var(--ai)}
+
+/* ---------- skill × career explorer ---------- */
+.explorer button{font-family:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:left;width:100%;display:block}
+.exp-legend{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-soft);padding:14px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-bottom:clamp(20px,3vw,32px)}
+.exp-legend .lg{display:inline-flex;align-items:center;gap:7px}
+.exp-legend .hint{color:var(--muted);margin-left:auto}
+@media (max-width:640px){.exp-legend .hint{margin-left:0;width:100%}}
+.meter{display:inline-flex;gap:3px;vertical-align:middle}
+.meter i{width:6px;height:6px;border-radius:50%;border:1px solid var(--ai);display:inline-block;box-sizing:border-box}
+.meter i.on{background:var(--ai)}
+
+.exp-grid{display:grid;grid-template-columns:0.95fr 1.15fr;gap:clamp(20px,3vw,44px);align-items:start}
+@media (max-width:820px){.exp-grid{grid-template-columns:1fr;gap:32px}}
+.exp-h{font-family:"Shippori Mincho",serif;font-weight:600;font-size:18px;letter-spacing:.03em;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
+.exp-h span{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-left:10px}
+
+.sk-group{margin-bottom:22px}
+.sk-group:last-child{margin-bottom:0}
+.sk-kind{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--shu);margin-bottom:6px}
+button.sk{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:11px 12px;border-bottom:1px solid var(--rule-soft);border-radius:3px;transition:background .18s,opacity .18s,box-shadow .18s}
+button.sk:hover{background:var(--card)}
+button.sk .sk-name{font-size:14.5px;letter-spacing:.02em}
+button.sk .sk-lv{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);min-width:48px;text-align:right}
+button.sk.active{background:var(--card);box-shadow:inset 3px 0 0 var(--ai);background:color-mix(in srgb,var(--ai) 9%,var(--card))}
+button.sk.hi{box-shadow:inset 3px 0 0 var(--ai)}
+button.sk.dim{opacity:.34}
+button.sk.active .sk-name,button.sk.hi .sk-name{color:var(--ai);font-weight:500}
+
+button.xp{position:relative;border:1px solid var(--rule);border-radius:3px;padding:16px 18px;margin-bottom:12px;transition:background .18s,border-color .18s,opacity .18s}
+button.xp:last-child{margin-bottom:0}
+button.xp:hover{background:var(--card);border-color:var(--border-strong,var(--rule))}
+button.xp .xp-period{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;color:var(--shu);font-variant-numeric:tabular-nums}
+button.xp .xp-title{display:block;font-family:"Shippori Mincho",serif;font-weight:600;font-size:16.5px;letter-spacing:.02em;margin:5px 0 4px}
+button.xp .xp-desc{display:block;font-size:12.5px;line-height:1.7;color:var(--ink-soft)}
+button.xp .xp-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.xp-tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.02em;color:var(--muted);border:1px solid var(--rule);border-radius:2px;padding:2px 8px;transition:all .18s}
+.xp-tag.on{color:var(--ai);border-color:var(--ai);background:color-mix(in srgb,var(--ai) 10%,transparent);font-weight:500}
+button.xp.active{border-color:var(--ai);background:color-mix(in srgb,var(--ai) 7%,var(--card))}
+button.xp.hi{border-color:var(--ai)}
+button.xp.dim{opacity:.36}
+
+.exp-status{min-height:2.6em;margin-top:clamp(18px,3vw,28px);padding-top:16px;border-top:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;letter-spacing:.02em;color:var(--ink)}
+.exp-status:empty::before{content:"スキルまたは経歴をクリックすると、対応関係がここに表示されます。";color:var(--muted)}
+@media (prefers-reduced-motion:reduce){button.sk,button.xp,.xp-tag,a.rl{transition:none}}
+
 /* ---------- reveal on load ---------- */
 .fade{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
 .fade.d1{animation-delay:.06s}.fade.d2{animation-delay:.12s}.fade.d3{animation-delay:.18s}
