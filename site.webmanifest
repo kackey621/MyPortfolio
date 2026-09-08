@@ -1,0 +1,16 @@
+{
+  "name": "Akira Kusama Portfolio",
+  "short_name": "Akira Kusama",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ECEBE4",
+  "theme_color": "#2C3A86",
+  "icons": [
+    {
+      "src": "/assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

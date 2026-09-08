@@ -31,19 +31,20 @@ window.ROLE_ORDER = ["engineer.html","educator.html","researcher.html"];
 /* 外部リンク（フッターは全件、各役割ページは roles で絞り込み自動表示）
    roles: "engineer" / "educator" / "researcher" のうち、その項目に合うものを列挙 */
 window.LINKS = [
-  { label:"GitHub",       href:"https://github.com/kackey621",             ext:"↗",      roles:["engineer"] },
-  { label:"researchmap",  href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
-  { label:"ORCID",        href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
-  { label:"Blog / Notes", href:"https://notes.a-kusama.com/index.php/ja/",  ext:"↗",      roles:["educator","engineer"] },
-  { label:"Instagram",    href:"https://www.instagram.com/akirakusama/",    ext:"↗",      roles:["educator"] },
-  { label:"X (Twitter)",  href:"https://x.com/akirakusamajp",              ext:"↗",      roles:["engineer","educator","researcher"] },
-  { label:"お問い合わせ", href:"https://ja.a-kusama.com/contact-me/",       ext:"MAIL ↗", roles:["engineer","educator","researcher"] },
+  { label:"GitHub",       icon:"github",    href:"https://github.com/kackey621",             ext:"↗",      roles:["engineer"] },
+  { label:"LinkedIn",     icon:"linkedin",  href:"https://jp.linkedin.com/in/akira-kusama",   ext:"↗",      roles:["engineer","educator","researcher"] },
+  { label:"researchmap",  icon:"research",  href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
+  { label:"ORCID",        icon:"orcid",     href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
+  { label:"Blog / Notes", icon:"notes",     href:"https://notes.a-kusama.com/index.php/ja/",  ext:"↗",      roles:["educator","engineer"] },
+  { label:"Instagram",    icon:"instagram", href:"https://www.instagram.com/akirakusama/",    ext:"↗",      roles:["educator"] },
+  { label:"X",            icon:"x",         href:"https://x.com/akirakusamajp",              ext:"↗",      roles:["engineer","educator","researcher"] },
+  { label:"お問い合わせ", icon:"mail",      href:"https://ja.a-kusama.com/contact-me/",       ext:"MAIL ↗", roles:["engineer","educator","researcher"] },
 ];
 
 /* ============================================================
    スキル（フィルター用）
    ・level … 3=メイン / 2=実務あり / 1=利用可能
-   ・years … スキルシート上の経験年数（目安）
+   ・years … 経験年数（目安）
    ============================================================ */
 window.SKILLS = [
   { name:"PHP",         kind:"言語",           level:3, years:5 },
@@ -71,8 +72,8 @@ window.SKILLS = [
 ];
 
 /* ============================================================
-   案件・実績（スキルシート 2025-11 版より）
-   ・org … 表示名と外部リンク（SES クライアントは本人の意向で匿名）
+   案件・実績
+   ・org … 表示名と外部リンク
    ・phases … [要件定義, 基本設計, 詳細設計, 実装, テスト, 保守運用]
    ・start/end … "YYYY-MM"（end 省略 = 継続中）
    ・service … サービス概要 / body … 担当した業務内容
@@ -86,8 +87,11 @@ var WILLEN   = { name:"特定非営利活動法人 Willen",              url:"ht
 var WASEDA   = { name:"早稲田大学高等学院",                    url:"https://www.waseda.jp/school/shs/" };
 var KADOKAWA = { name:"角川ドワンゴ学園（N高・S高）",           url:"https://nnn.ed.jp/" };
 var FLN      = { name:"株式会社フューチャーリンクネットワーク", url:"https://www.futurelink.co.jp/" };
-function anon(n){ return { name:"株式会社"+n+"（非公開）", url:"" }; }
-function anonNpo(n){ return { name:"特定非営利活動法人"+n+"（非公開）", url:"" }; }
+function anon(n){
+  var labels = { K:"Web制作会社", O:"システム開発会社", S:"情報通信企業", H:"AI開発企業", C:"Webサービス企業" };
+  return { name:labels[n]||"クライアント企業", url:"" };
+}
+function anonNpo(){ return { name:"福祉サービス事業者", url:"" }; }
 
 window.PROJECTS = [
   { id:"p01", org:{name:"フリーランス受託",url:""}, industry:"情報", role:"業務委託／受託・フルスタックエンジニア", cat:"engineer",

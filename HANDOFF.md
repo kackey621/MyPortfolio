@@ -44,7 +44,7 @@
 
 ```
 .
-├── index.html          # トップ（概要・自己紹介・目的別入口・実績・お知らせ最新5件）
+├── index.html          # トップ（概要・自己紹介・目的別入口・現在の活動／主な経歴・お知らせ最新5件）
 ├── engineer.html       # 目的別詳細：エンジニア（できること・開発実績・役割別リンク）
 ├── educator.html       # 目的別詳細：教育者（指導歴・資格・指導実績）
 ├── researcher.html     # 目的別詳細：研究者（研究関心・在籍・外部プロフィール）
@@ -115,11 +115,13 @@
 
 | 関数 | 役割 |
 |---|---|
-| `buildHeader()` | ヘッダーを注入。`NAV` から生成し、現在ページを `aria-current` で自動ハイライト |
+| `buildHeader()` | ヘッダーを注入。`NAV` から生成し、現在ページを `aria-current` で自動ハイライト。860px 以下は開閉式メニュー |
+| `initNavigation()` | モバイルナビの開閉、Esc キー、ページ遷移・画面拡大時の自動クローズを管理 |
 | `buildFooter()` | フッター（外部リンク＋コロフォン）を注入 |
 | `renderPress()` | `[data-press]` に描画。`assets/news-index.json` を優先取得、失敗時は `PRESS` にフォールバック。`data-press-limit` で件数制限（トップは 5）。各項目は `release.html?slug=` へリンク |
 | `renderRoleLinks()` | `[data-role-links="engineer"]` 等に、その役割の外部リンクを表示 |
-| `renderProjectExplorer()` | `[data-projects]`（任意で `data-projects-role`）に**案件エクスプローラー**を描画。技術フィルター＋アニメーション付きフロー＋クリックでポップアップ詳細（組織／参画情報／工程／技術／業務内容）。`?skill=` で初期フィルター可 |
+| `renderCareerSummary()` | ホームの `[data-career-summary]` に、現在からこれまでの主な活動を一本のタイムラインとして要約表示。各項目は `profile.html?project=<id>#skills` へ遷移 |
+| `renderProjectExplorer()` | `[data-projects]`（任意で `data-projects-role`）に**案件エクスプローラー**を描画。`SKILLS.kind` 別の技術複数選択（AND）＋参画年範囲＋進行中フィルター、選択条件・件数、アニメーション付きフロー、クリック詳細を提供。`?skill=PHP,Laravel` のような初期指定も可 |
 | `buildPager()` | 目的別ページの前後ページャーを `ROLE_ORDER` から生成 |
 | `initTheme()` | ライト／ダーク切替（`localStorage` 保存） |
 
@@ -131,6 +133,7 @@
 <div data-press data-press-limit="5"></div>          <!-- お知らせ最新5件 -->
 <div data-projects></div>                            <!-- 全案件エクスプローラー -->
 <div data-projects data-projects-role="engineer"></div> <!-- 役割で絞った案件 -->
+<div data-career-summary></div>                      <!-- ホーム用の主要活動タイムライン -->
 <div data-role-links="engineer"></div>               <!-- 役割別リンク -->
 <div id="role-pager"></div>                          <!-- 前後ページャー -->
 <script src="assets/data.js"></script>
@@ -139,22 +142,11 @@
 
 ---
 
-## 6. データの出所と匿名化方針（重要）
+## 6. 表示・取扱方針
 
-案件データは本人のスキルシートに由来。
-
-- 提供された `.csv` は**日本語が全て文字化け（`?`）して失われていた**ため使用不可。
-- **`.xlsx`（`~/Downloads/2512_SkillSheet_AKIRA.xlsx`）は日本語が保持**されており、こちらから抽出した。
-  （このマシンに `openpyxl` が無いため、`zipfile` + `xml.etree` で `sharedStrings.xml`/`sheet1.xml` を直接パースした。）
-
-**組織名の扱い**:
-- 公開＝実名＋リンク: **Willen**（本人の NPO・理事長）／**早稲田大学高等学院**（情報科 TA）／
-  **角川ドワンゴ学園（N高・S高）**（指導メンター）／**株式会社フューチャーリンクネットワーク**
-  （案件「コミュチカ」。本人が自己 PR 内で社名を明記していたため実名採用）。
-- SES クライアント（株式会社 S/H/O/K/C、特定非営利活動法人 S）は**匿名**（「株式会社S（非公開）」等）。
-
-> ⚠️ **未確認事項**: フューチャーリンクネットワークを匿名（株式会社F）に戻すか、他に公開可能な
-> クライアントがあるかは本人確認待ち。スキルシートの年齢・フルリモート等の掲載可否も未確認。
+- サイト上では、案件情報に関する内部的な取扱情報を注記しない。
+- 固有名を掲載しない案件は、業種・事業特性に沿った中立的な組織表記を使用する。
+- ホームでは主要な活動だけを表示し、全件は折りたたみ内の案件エクスプローラーで確認できるようにする。
 
 ---
 
@@ -178,7 +170,8 @@
 
 ### 案件・実績を追加／修正する
 `assets/data.js` の `PROJECTS` を編集（4 章のフィールド参照）。`stack` の名称を `SKILLS.name` と
-一致させると技術フィルターの対象になる。
+一致させると、`SKILLS.kind`（言語・フレームワーク・データベース等）の分類で技術フィルターに出る。
+期間フィルターの選択肢は `PROJECTS.start` / `end` から自動生成される。
 
 ### ページ・ナビ・リンク・スキルを変える
 - ページ追加: HTML を作り、`NAV` に 1 行足す（ヘッダー／ページャーに自動反映）。
@@ -223,9 +216,6 @@ git push -u origin main
 
 ## 10. 未決 TODO（引き継ぎ先へ）
 
-- [ ] フューチャーリンクネットワーク（案件#11）の実名可否を本人に確認
-- [ ] 他 SES クライアントで公開可能なものがあるか確認
-- [ ] スキルシートの年齢・勤務形態などの追加掲載可否
 - [ ] GitHub リモート作成＋push（本人の GitHub アカウントが必要）
 - [ ] GitHub Pages 有効化・独自ドメイン（`a-kusama.com`）設定の要否
 
@@ -235,8 +225,8 @@ git push -u origin main
 
 | ハッシュ | 内容 |
 |---|---|
-| `a23a68d` | スキルシート実データ（.xlsx）で案件を充実。site.js 回帰（引用符不整合）を修正 |
-| `a332a78` | 案件エクスプローラー・Markdown リリース・UI 拡大。CSV ベースの初版データ |
+| `a23a68d` | 案件データを充実。site.js 回帰（引用符不整合）を修正 |
+| `a332a78` | 案件エクスプローラー・Markdown リリース・UI 拡大。初版データを追加 |
 | `bd6c7a7` | 役割別リンク＋スキル×経歴エクスプローラー（初版） |
 | `d75b143` | 複数ページ静的サイト化＋共有 JS 層 |
 | `8b57a48` | 初版（目的別リデザイン：engineer / educator / researcher） |
