@@ -371,7 +371,12 @@ a.xp-org:hover{text-decoration:underline}
 .pm-phases .ph.on{color:#fff;background:var(--ai);border-color:var(--ai)}
 .pm-chips{display:flex;flex-wrap:wrap;gap:7px}
 .pchip{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.01em;color:var(--ink);border:1px solid var(--rule);border-radius:2px;padding:4px 10px;background:var(--card)}
-.pm-note{font-size:13px;color:var(--muted);line-height:1.8;margin:22px 0 0;padding-top:16px;border-top:1px solid var(--rule)}
+.pm-service{font-family:"Shippori Mincho",serif;font-size:16px;line-height:1.7;color:var(--ink);margin:18px 0 0;padding:14px 16px;background:var(--card);border-left:3px solid var(--ai);border-radius:0 4px 4px 0}
+.pm-duties{list-style:none;margin:0;padding:0}
+.pm-duties li{position:relative;padding:9px 0 9px 20px;border-bottom:1px solid var(--rule-soft);font-size:14.5px;line-height:1.8;color:var(--ink)}
+.pm-duties li:last-child{border-bottom:0}
+.pm-duties li::before{content:"—";position:absolute;left:0;color:var(--shu)}
+.pm-note{font-size:12.5px;color:var(--muted);line-height:1.8;margin:22px 0 0;padding-top:16px;border-top:1px solid var(--rule)}
 
 /* ---------- reveal on load ---------- */
 .fade{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}

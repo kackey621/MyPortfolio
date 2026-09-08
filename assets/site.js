@@ -110,7 +110,7 @@
             '<span class="date">' + esc(fmtDate(p.date)) + "</span>" +
             '<span class="tag">' + esc(p.tag || "") + "</span>" +
             '<span class="title">' + esc(p.title) + "</span>" +
-            '<span class="arw">→</span></a>";
+            '<span class="arw">→</span></a>';
         }).join("");
       });
     }
@@ -184,8 +184,8 @@
 
     function fmtYM(ym){ var m=/^(\d{4})-(\d{2})$/.exec(ym||""); return m? m[1]+"."+m[2] : (ym||""); }
     function dur(m){ var y=Math.floor(m/12), mo=m%12; return (y?y+"年":"")+(mo?mo+"ヶ月":(y?"":"1ヶ月")); }
-    function org(key){
-      var o=(window.ORGS||{})[key]||{name:key,url:""};
+    function org(o){
+      o = o || {name:"",url:""};
       return o.url
         ? '<a class="xp-org" href="'+esc(o.url)+'" target="_blank" rel="noopener">'+esc(o.name)+' ↗</a>'
         : '<span class="xp-org none">'+esc(o.name)+'</span>';
@@ -214,16 +214,20 @@
       modal.querySelector(".pm-body").innerHTML =
         '<div class="pm-eyebrow">案件 / Project</div>' +
         '<h3 id="pm-title" class="pm-title">'+esc(p.domain)+'</h3>' +
-        '<div class="pm-org">'+org(p.org)+'<span class="pm-role">'+esc(p.role)+'</span></div>' +
+        '<div class="pm-org">'+org(p.org)+
+          (p.industry?'<span class="pm-role">業種：'+esc(p.industry)+'</span>':"")+
+          '<span class="pm-role">'+esc(p.role)+'</span></div>' +
+        (p.service?'<p class="pm-service">'+esc(p.service)+'</p>':"") +
         '<div class="pm-grid">' +
           '<div class="pm-cell"><span class="pm-k">期間</span><span class="pm-v">'+esc(period)+'</span></div>' +
           '<div class="pm-cell"><span class="pm-k">稼働</span><span class="pm-v">'+esc(dur(p.months))+'</span></div>' +
           (scale?'<div class="pm-cell"><span class="pm-k">規模</span><span class="pm-v">'+esc(scale)+'</span></div>':"") +
           '<div class="pm-cell"><span class="pm-k">立場</span><span class="pm-v">'+esc(p.role)+'</span></div>' +
         '</div>' +
+        ((p.body&&p.body.length)?'<div class="pm-sec"><div class="pm-h">担当した業務内容</div><ul class="pm-duties">'+p.body.map(function(b){return '<li>'+esc(b)+'</li>';}).join("")+'</ul></div>':"") +
         '<div class="pm-sec"><div class="pm-h">担当工程</div><div class="pm-phases">'+phaseHtml+'</div></div>' +
         '<div class="pm-sec"><div class="pm-h">技術スタック</div><div class="pm-chips">'+chips(p.stack)+'</div></div>' +
-        '<p class="pm-note">案件概要・担当業務の詳細は準備中です。</p>';
+        '<p class="pm-note">出典：スキルシート（2025年11月）。SES クライアント名は本人の意向で非公開としています。</p>';
       lastFocus=document.activeElement;
       modal.hidden=false; document.body.style.overflow="hidden";
       requestAnimationFrame(function(){ modal.classList.add("open"); });
@@ -270,7 +274,7 @@
             '<span class="node-dot" aria-hidden="true"></span>' +
             '<span class="node-body">' +
               '<span class="node-period">'+esc(period)+' <em>'+esc(dur(p.months))+'</em></span>' +
-              '<span class="node-org">'+((window.ORGS[p.org]||{}).name||"")+'</span>' +
+              '<span class="node-org">'+esc((p.org||{}).name||"")+'</span>' +
               '<span class="node-domain">'+esc(p.domain)+'</span>' +
               '<span class="node-role">'+esc(p.role)+'</span>' +
               '<span class="node-tags">'+top.map(function(s){return '<i'+(s===active?' class="hit"':'')+'>'+esc(s)+'</i>';}).join("")+((p.stack||[]).length>6?'<i class="more">+'+((p.stack.length)-6)+'</i>':'')+'</span>' +
