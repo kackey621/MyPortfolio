@@ -122,7 +122,9 @@
       var body=icons[type]||icons.notes;
       return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+body+'</svg>';
     }
-    var social = window.LINKS.filter(function(link){return link.icon;}).map(function(link){
+    var social = window.LINKS.filter(function(link){
+      return link.icon && (!link.langs || link.langs.indexOf(locale) !== -1);
+    }).map(function(link){
       return '<a class="social-link social-'+esc(link.icon)+'" href="'+esc(link.href)+'" target="_blank" rel="me noopener" aria-label="'+esc(link.label)+'" data-label="'+esc(link.label)+'">'+iconSvg(link.icon)+'</a>';
     }).join("");
     var languages = [

@@ -38,6 +38,7 @@ window.LINKS = [
   { label:"Blog / Notes", icon:"notes",     href:"https://notes.a-kusama.com/index.php/ja/",  ext:"↗",      roles:["educator","engineer"] },
   { label:"Instagram",    icon:"instagram", href:"https://www.instagram.com/akirakusama/",    ext:"↗",      roles:["educator"] },
   { label:"X",            icon:"x",         href:"https://x.com/akirakusamajp",              ext:"↗",      roles:["engineer","educator","researcher"] },
+  { label:"お問い合わせ", icon:"mail",      href:"https://docs.google.com/forms/d/e/1FAIpQLScImgpsCYS1sPf0OVpRUEgOpsG5Rz32zQzh8j76Q20xhQ1jBQ/viewform?usp=dialog", ext:"↗", roles:["engineer","educator","researcher"], langs:["ja"] },
 ];
 
 /* ============================================================
