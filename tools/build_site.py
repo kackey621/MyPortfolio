@@ -117,7 +117,7 @@ def seo_block(page: str, locale: str) -> str:
 <meta name="robots" content="{robots}">
 <link rel="canonical" href="{canonical}">
 {alternates}
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon.svg?v=20260909-beige-brown" type="image/svg+xml">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="image_src" href="{og_image}">
 <meta property="og:title" content="{html.escape(title, quote=True)}">
@@ -216,7 +216,7 @@ def article_page(article: dict, locale: str, document: dict) -> str:
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <link rel="canonical" href="{canonical}">
 {alternates}
-<link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{prefix}assets/favicon.svg?v=20260909-beige-brown" type="image/svg+xml">
 <link rel="manifest" href="{prefix}site.webmanifest">
 <meta property="og:type" content="article">
 <meta property="og:title" content="{html.escape(title,quote=True)}">
@@ -309,7 +309,7 @@ def main() -> None:
     (ROOT / "_redirects").write_text(build_redirects(news_index), encoding="utf-8")
     (ROOT / "sitemap.xml").write_text(build_sitemap(news_index), encoding="utf-8")
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
-    manifest = {"name":"Akira Kusama Portfolio","short_name":"Akira Kusama","start_url":"/","display":"standalone","background_color":"#ECEBE4","theme_color":"#2C3A86","icons":[{"src":"/assets/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+    manifest = {"name":"Akira Kusama Portfolio","short_name":"Akira Kusama","start_url":"/","display":"standalone","background_color":"#ECEBE4","theme_color":"#2C3A86","icons":[{"src":"/assets/favicon.svg?v=20260909-beige-brown","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
     (ROOT / "site.webmanifest").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Built 18 pages and {len(news_index) * 3} article pages with extensionless URLs.")
 
