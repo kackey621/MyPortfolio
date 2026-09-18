@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>スキルシート生成｜草間 暁</title>
+<meta name="description" content="経歴ページに掲載中の案件から選んで、応募用のスキルシート（Excel）をその場で書き出せます。" />
+<meta name="robots" content="noindex,follow" />
+<meta name="theme-color" content="#ECEBE4" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="/assets/style.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="page-head">
+  <a class="back-link" href="/profile/">← 経歴に戻る</a>
+  <h1>スキルシート生成</h1>
+  <p>
+    「経歴」ページに掲載中の案件から選ぶと、応募用のスキルシート（Excel）をその場で書き出せます。
+    すべてブラウザ内で処理され、サーバーには送信されません。
+  </p>
+</header>
+
+<div class="search-bar">
+  <input id="searchInput" type="search" placeholder="会社名・案件名・技術で検索" autocomplete="off" />
+  <div id="tagFilter" class="tag-filter"></div>
+</div>
+
+<main>
+  <section class="picker" aria-label="案件を選ぶ">
+    <ul id="tileGrid" class="tile-grid"></ul>
+    <p id="emptyMessage" class="empty-message" hidden>該当する案件がありません</p>
+  </section>
+
+  <aside class="selection" aria-label="選択中の案件">
+    <div class="selection-head">
+      <h2>選択中 <span id="selectedCount">0</span> / <span id="maxCount">16</span></h2>
+      <button id="generateBtn" type="button" class="primary">スキルシートを書き出す</button>
+    </div>
+    <p id="status" class="status" role="status"></p>
+    <ol id="selectedList" class="selected-list"></ol>
+  </aside>
+</main>
+
+<template id="tileTemplate">
+  <li>
+    <button type="button" class="tile">
+      <span class="tile-check" aria-hidden="true"></span>
+      <span class="tile-main">
+        <span class="tile-company"></span>
+        <span class="tile-period"></span>
+      </span>
+      <span class="tile-tags"></span>
+    </button>
+  </li>
+</template>
+
+<template id="selectedRowTemplate">
+  <li class="selected-row">
+    <span class="s-company"></span>
+    <span class="s-period"></span>
+    <span class="s-controls">
+      <button type="button" class="move-up" title="上へ">↑</button>
+      <button type="button" class="move-down" title="下へ">↓</button>
+      <button type="button" class="remove" title="除外">×</button>
+    </span>
+  </li>
+</template>
+
+<script src="/assets/data.js"></script>
+<script src="vendor/jszip.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

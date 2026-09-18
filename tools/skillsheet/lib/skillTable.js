@@ -11,11 +11,18 @@ function byYearsDesc(skills, kind) {
   return skills.filter((s) => s.kind === kind).slice().sort((a, b) => (b.years || 0) - (a.years || 0));
 }
 
-function bucketCells(items, nameCol, yearsCol) {
+// テンプレートのフレームワーク欄は13行目だけ本来のR13:T13結合が外れており、
+// 名前は代わりにS13に入っている（テンプレート側の元からの不整合）。
+// R13に書くとS13の古い値（"Vue.js"）と重なって表示されるため、行ごとに列を上書きできるようにする。
+function bucketCells(items, nameCol, yearsCol, nameColOverrides) {
   const cells = {};
   ROWS.forEach((r, i) => {
     const item = items[i];
-    cells[`${nameCol}${r}`] = item ? item.name : "";
+    const col = (nameColOverrides && nameColOverrides[r]) || nameCol;
+    if (nameColOverrides && nameColOverrides[r] && col !== nameCol) {
+      cells[`${nameCol}${r}`] = ""; // 通常の列は使わないので明示的に空にする
+    }
+    cells[`${col}${r}`] = item ? item.name : "";
     cells[`${yearsCol}${r}`] = item ? item.years : "";
   });
   return cells;
@@ -32,7 +39,7 @@ function buildSkillCells(skills) {
   return {
     ...bucketCells(langs.slice(0, 5), "G", "J"),
     ...bucketCells(langs.slice(5, 10), "L", "O"),
-    ...bucketCells(frameworks, "R", "U"),
+    ...bucketCells(frameworks, "R", "U", { 13: "S" }),
     ...bucketCells(databases, "X", "AA"),
     ...bucketCells(infra, "AD", "AG"),
     ...bucketCells(products, "AJ", "AM"),

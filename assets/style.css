@@ -292,6 +292,14 @@ button.press-clear:disabled{opacity:.35;color:var(--muted);border-color:var(--ru
 .sec-more-link{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.06em;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ai);padding-bottom:3px}
 .sec-more-link:hover{color:var(--ai)}
 
+/* ---------- tool callout (e.g. skill-sheet generator) ---------- */
+.tool-note{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;margin:-4px 0 28px;padding:18px 20px;background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--ai);border-radius:0 4px 4px 0}
+.tool-note-text{flex:1 1 320px;min-width:0}
+.tool-note-head{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--shu);margin-bottom:8px}
+.tool-note-text p{margin:0;font-family:"Shippori Mincho",serif;font-size:15px;line-height:1.75;color:var(--ink-soft)}
+.tool-note .btn{flex-shrink:0}
+@media (max-width:640px){.tool-note{flex-direction:column;align-items:flex-start}}
+
 /* ---------- pager (prev/next between role pages) ---------- */
 .pager{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 @media (max-width:640px){.pager{grid-template-columns:1fr}}
