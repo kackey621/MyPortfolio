@@ -5,7 +5,8 @@
       "name": "skillsheet",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["start", "--prefix", "tools/skillsheet"],
-      "port": 4173
+      "port": 4173,
+      "autoPort": true
     },
     {
       "name": "site",
