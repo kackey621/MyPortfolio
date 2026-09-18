@@ -108,7 +108,7 @@ def seo_block(page: str, locale: str) -> str:
                 "sameAs": ["https://github.com/kackey621", "https://jp.linkedin.com/in/akira-kusama", "https://www.instagram.com/akirakusama/", "https://x.com/akirakusamajp"],
                 "knowsAbout": ["Software Development", "IT Consulting", "Computing Education", "Educational Technology", "Information Security"],
             },
-            {"@type": page_type, "@id": canonical + "#page", "url": canonical, "name": title, "description": description, "inLanguage": locale, "about": {"@id": BASE + "/#person"}, "primaryImageOfPage": {"@type": "ImageObject", "url": og_image, "width": 1200, "height": 630}},
+            {"@type": page_type, "@id": canonical + "#page", "url": canonical, "name": title, "description": description, "inLanguage": locale, ("mainEntity" if page_type == "ProfilePage" else "about"): {"@id": BASE + "/#person"}, "primaryImageOfPage": {"@type": "ImageObject", "url": og_image, "width": 1200, "height": 630}},
             {"@type": "WebSite", "@id": BASE + "/#website", "url": BASE + "/", "name": "Akira Kusama", "alternateName": "草間 暁", "inLanguage": list(LOCALES)},
         ],
     }
