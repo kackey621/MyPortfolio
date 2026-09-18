@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>スキルシート生成｜草間 暁</title>
-<meta name="description" content="経歴ページに掲載中の案件から選んで、応募用のスキルシート（Excel）をその場で書き出せます。" />
+<meta name="description" content="経歴ページに掲載中の案件から選んで、応募用のスキルシート（Excel・PDF）をその場で書き出せます。" />
 <meta name="robots" content="noindex,follow" />
 <meta name="theme-color" content="#ECEBE4" />
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
@@ -15,35 +15,45 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+<div class="app-ui">
 <header class="page-head">
-  <a class="back-link" href="/profile/">← 経歴に戻る</a>
-  <h1>スキルシート生成</h1>
-  <p>
-    「経歴」ページに掲載中の案件から選ぶと、応募用のスキルシート（Excel）をその場で書き出せます。
+  <div class="lang-switch" role="group" aria-label="Language / Sprache">
+    <button type="button" class="lang-btn" data-lang-btn="ja" aria-pressed="true">日本語</button>
+    <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="false">EN</button>
+    <button type="button" class="lang-btn" data-lang-btn="de" aria-pressed="false">DE</button>
+  </div>
+  <a class="back-link" href="/profile/" data-i18n="backLink">← 経歴に戻る</a>
+  <h1 data-i18n="title">スキルシート生成</h1>
+  <p data-i18n="intro">
+    「経歴」ページに掲載中の案件から選ぶと、応募用のスキルシート（Excel・PDF）をその場で書き出せます。
     すべてブラウザ内で処理され、サーバーには送信されません。
   </p>
 </header>
 
 <div class="search-bar">
-  <input id="searchInput" type="search" placeholder="会社名・案件名・技術で検索" autocomplete="off" />
+  <input id="searchInput" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="会社名・案件名・技術で検索" autocomplete="off" />
   <div id="tagFilter" class="tag-filter"></div>
 </div>
 
 <main>
   <section class="picker" aria-label="案件を選ぶ">
     <ul id="tileGrid" class="tile-grid"></ul>
-    <p id="emptyMessage" class="empty-message" hidden>該当する案件がありません</p>
+    <p id="emptyMessage" class="empty-message" data-i18n="emptyMessage" hidden>該当する案件がありません</p>
   </section>
 
   <aside class="selection" aria-label="選択中の案件">
     <div class="selection-head">
-      <h2>選択中 <span id="selectedCount">0</span> / <span id="maxCount">16</span></h2>
-      <button id="generateBtn" type="button" class="primary">スキルシートを書き出す</button>
+      <h2><span data-i18n="selectedLabel">選択中</span> <span id="selectedCount">0</span> / <span id="maxCount">16</span></h2>
+      <div class="generate-buttons">
+        <button id="generateXlsxBtn" type="button" class="primary" data-i18n="generateXlsx">Excelで書き出す</button>
+        <button id="generatePdfBtn" type="button" class="primary ghost" data-i18n="generatePdf">PDFで書き出す</button>
+      </div>
     </div>
     <p id="status" class="status" role="status"></p>
     <ol id="selectedList" class="selected-list"></ol>
   </aside>
 </main>
+</div>
 
 <template id="tileTemplate">
   <li>
@@ -63,14 +73,17 @@
     <span class="s-company"></span>
     <span class="s-period"></span>
     <span class="s-controls">
-      <button type="button" class="move-up" title="上へ">↑</button>
-      <button type="button" class="move-down" title="下へ">↓</button>
-      <button type="button" class="remove" title="除外">×</button>
+      <button type="button" class="move-up">↑</button>
+      <button type="button" class="move-down">↓</button>
+      <button type="button" class="remove">×</button>
     </span>
   </li>
 </template>
 
+<div id="printView" class="print-view" aria-hidden="true"></div>
+
 <script src="/assets/data.js"></script>
+<script src="/assets/locale.js"></script>
 <script src="vendor/jszip.min.js"></script>
 <script src="app.js"></script>
 </body>
