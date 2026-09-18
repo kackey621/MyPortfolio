@@ -103,7 +103,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 ## SEOと公開
 
 canonical・hreflang・OGP・Twitter Card・構造化データ・サイトマップは拡張子なしのURLで生成します。
-本番URLは `tools/build_site.py` の `BASE`（現在 `https://ja.a-kusama.com`）です。
+本番URLは `tools/build_site.py` の `BASE`（現在 `https://www.a-kusama.com`）です。
 ドメイン変更時は更新して再生成してください。サイトはドメインのルートでの配信を想定しています。
 
 現在のSNS共有画像は `assets/akira-kusama.jpg` です。

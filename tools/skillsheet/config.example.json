@@ -1,0 +1,5 @@
+{
+  "templatePath": "/absolute/path/to/スキルシート_AKIRA.xlsx",
+  "outputDir": "./output",
+  "birthDate": "YYYY-MM-DD"
+}

@@ -155,7 +155,7 @@ Markdownの見出し、リンク、強調、リスト、表、コードブロッ
 - 日本語を既定とし、`en/` と `de/` に言語別の固有URLを配置。
 - 主要ページ・全記事に canonical / hreflang、固有 title / description、OGP、Twitter Card、JSON-LD を設定。
 - 記事は静的HTMLと `BlogPosting` 構造化データを生成するため、検索・SNSクローラーが本文と日付を直接取得できる。
-- SEO生成の本番基準URLは `tools/build_site.py` の `BASE`（現在 `https://ja.a-kusama.com`）。ドメイン変更時はここを更新する。
+- SEO生成の本番基準URLは `tools/build_site.py` の `BASE`（現在 `https://www.a-kusama.com`）。ドメイン変更時はここを更新する。
 - SNS専用横長画像は未生成。現状は既存ポートレートを OGP / Twitter Card に使用。
 
 ### 案件・実績を追加／修正する

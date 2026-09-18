@@ -5,3 +5,7 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+
+# スキルシート生成ツール（ローカル専用・個人のテンプレートパスを含む）
+tools/skillsheet/config.json
+tools/skillsheet/output/

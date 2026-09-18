@@ -33,8 +33,8 @@ window.ROLE_ORDER = ["engineer/","educator/","researcher/"];
 window.LINKS = [
   { label:"GitHub",       icon:"github",    href:"https://github.com/kackey621",             ext:"↗",      roles:["engineer"] },
   { label:"LinkedIn",     icon:"linkedin",  href:"https://jp.linkedin.com/in/akira-kusama",   ext:"↗",      roles:["engineer","educator","researcher"] },
-  { label:"researchmap",  icon:"research",  href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
-  { label:"ORCID",        icon:"orcid",     href:"https://ja.a-kusama.com/researcher/",       ext:"↗",      roles:["researcher"] },
+  { label:"researchmap",  icon:"research",  href:"https://www.a-kusama.com/researcher/",      ext:"↗",      roles:["researcher"] },
+  { label:"ORCID",        icon:"orcid",     href:"https://www.a-kusama.com/researcher/",      ext:"↗",      roles:["researcher"] },
   { label:"Blog / Notes", icon:"notes",     href:"https://notes.a-kusama.com/index.php/ja/",  ext:"↗",      roles:["educator","engineer"] },
   { label:"Instagram",    icon:"instagram", href:"https://www.instagram.com/akirakusama/",    ext:"↗",      roles:["educator"] },
   { label:"X",            icon:"x",         href:"https://x.com/akirakusamajp",              ext:"↗",      roles:["engineer","educator","researcher"] },
@@ -95,7 +95,7 @@ window.SKILLS = [
 var PH = ["要件定義","基本設計","詳細設計","実装","テスト","保守運用"];
 window.PHASE_LABELS = PH;
 
-var WILLEN   = { name:"特定非営利活動法人 Willen",              url:"https://ja.a-kusama.com/" };
+var WILLEN   = { name:"特定非営利活動法人 Willen",              url:"https://www.a-kusama.com/" };
 var WASEDA   = { name:"早稲田大学高等学院",                    url:"https://www.waseda.jp/school/shs/" };
 var KADOKAWA = { name:"角川ドワンゴ学園（N高・S高）",           url:"https://nnn.ed.jp/" };
 var FLN      = { name:"株式会社フューチャーリンクネットワーク", url:"https://www.futurelink.co.jp/" };

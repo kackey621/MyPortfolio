@@ -63,7 +63,7 @@ def all_chars() -> str:
                 s |= set(txt)
     for v in NAME.values():
         s |= set(v)
-    s |= set("ja.a-kusama.com｜|/·—&0123456789"
+    s |= set("www.a-kusama.com｜|/·—&0123456789"
              "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
     s.discard("\n")
     return "".join(sorted(s))
