@@ -39,6 +39,8 @@ const UI_TEXT = {
   },
   searchPlaceholder: { ja: "会社名・案件名・技術で検索", en: "Search by company, project, or technology", de: "Suche nach Firma, Projekt oder Technologie" },
   selectedLabel: { ja: "選択中", en: "Selected", de: "Ausgewählt" },
+  selectAll: { ja: "全て選択", en: "Select all", de: "Alle auswählen" },
+  clearAll: { ja: "全て解除", en: "Clear all", de: "Alle abwählen" },
   generateXlsx: { ja: "Excelで書き出す", en: "Export as Excel", de: "Als Excel exportieren" },
   generatePdf: { ja: "PDFで書き出す", en: "Export as PDF", de: "Als PDF exportieren" },
   emptyMessage: { ja: "該当する案件がありません", en: "No matching projects", de: "Keine passenden Projekte" },
@@ -206,8 +208,11 @@ function excelSerialDate(isoDate) {
   const epoch = Date.UTC(1899, 11, 30);
   return Math.round((Date.UTC(y, m - 1, d) - epoch) / 86400000);
 }
-function formatUpdatedAt(date) {
-  return `更新日：　${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+function formatUpdatedAt(date, lang) {
+  const y = date.getFullYear(), m = date.getMonth() + 1, d = date.getDate();
+  if (lang === "en") return `Updated: ${date.toLocaleString("en", { month: "long" })} ${d}, ${y}`;
+  if (lang === "de") return `Aktualisiert: ${d}. ${date.toLocaleString("de", { month: "long" })} ${y}`;
+  return `更新日：　${y}年${m}月${d}日`;
 }
 function escapeXml(text) {
   return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -294,13 +299,70 @@ function writeBlock(xml, r, project, slot) {
   return xml;
 }
 
-async function fillWorkbook(templateArrayBuffer, projects, skills) {
+/* テンプレート（xlsx）の固定ラベル。日本語版はテンプレートの値をそのまま使うため
+   ja は定義せず、en/de のときだけ該当セルを上書きする。個人情報欄の見出し
+   （フリガナ・氏名・自己PR 等）と実務経験・案件テーブルの見出しをカバーする。 */
+const TEMPLATE_LABELS = {
+  B1: { en: "Skill Sheet", de: "Skill-Sheet" },
+  B3: { en: "Reading", de: "Lesung" },
+  S3: { en: "Gender", de: "Geschlecht" },
+  U3: { en: "Male", de: "Männlich" },
+  W3: { en: "Age", de: "Alter" },
+  AA3: { en: "Education", de: "Ausbildung" },
+  AC3: { en: "High school graduate", de: "Oberschulabschluss" },
+  B4: { en: "Name", de: "Name" },
+  S5: { en: "Portfolio", de: "Portfolio" },
+  AA5: { en: "Nearest station", de: "Nächster Bahnhof" },
+  B7: { en: "Specialties", de: "Schwerpunkte" },
+  F7: { en: "Server-side development, IT consulting", de: "Serverseitige Entwicklung, IT-Beratung" },
+  W7: { en: "Primary languages", de: "Hauptsprachen" },
+  B8: { en: "Core capabilities", de: "Kernkompetenzen" },
+  F8: { en: "Coding, internal IT, DX enablement", de: "Entwicklung, interne IT, DX-Förderung" },
+  B9: { en: "Profile /\n·\nNotes", de: "Profil /\n·\nAnmerkungen" },
+  B10: { en: "Professional development experience", de: "Berufliche Entwicklungserfahrung" },
+  F10: { en: "Dev. languages", de: "Entw.-sprachen" },
+  G10: { en: "Name", de: "Name" }, J10: { en: "Years", de: "Jahre" },
+  L10: { en: "Name", de: "Name" }, O10: { en: "Years", de: "Jahre" },
+  Q10: { en: "Frameworks", de: "Frameworks" },
+  R10: { en: "Name", de: "Name" }, U10: { en: "Years", de: "Jahre" },
+  W10: { en: "Databases", de: "Datenbanken" },
+  X10: { en: "Name", de: "Name" }, AA10: { en: "Years", de: "Jahre" },
+  AC10: { en: "Server / OS", de: "Server / OS" },
+  AD10: { en: "Name", de: "Name" }, AG10: { en: "Years", de: "Jahre" },
+  AI10: { en: "Other", de: "Weitere" },
+  AJ10: { en: "Name", de: "Name" }, AM10: { en: "Years", de: "Jahre" },
+  B17: { en: "Period", de: "Zeitraum" },
+  G17: { en: "Company / Product", de: "Firma / Produkt" },
+  W17: { en: "Employ-\nment", de: "Anstel-\nlung" },
+  Y17: { en: "Team\n·\nSize", de: "Team-\n·\ngröße" },
+  AA17: { en: "Languages\n·\nFW", de: "Sprachen\n·\nFW" },
+  AC17: { en: "DB", de: "DB" },
+  AE17: { en: "Server\nOS", de: "Server\nOS" },
+  AG17: { en: "Tools", de: "Werkzeuge" },
+  AI17: { en: "Delivery phases", de: "Projektphasen" },
+  G18: { en: "Industry", de: "Branche" },
+  I18: { en: "Description", de: "Beschreibung" },
+  AI18: { en: " Requirements", de: " Anforderungen" },
+  AJ18: { en: " Architecture", de: " Grobkonzept" },
+  AK18: { en: " Detailed design", de: " Feinkonzept" },
+  AL18: { en: " Implementation", de: " Umsetzung" },
+  AM18: { en: " Testing /\n review", de: " Test /\n Review" },
+  AN18: { en: " Operations", de: " Betrieb" },
+};
+
+async function fillWorkbook(templateArrayBuffer, projects, skills, lang) {
   const zip = await JSZip.loadAsync(templateArrayBuffer);
   const file = zip.file(SHEET_PATH);
   if (!file) throw new Error(`テンプレートに ${SHEET_PATH} が見つかりません`);
   let xml = await file.async("string");
 
-  xml = setCell(xml, UPDATED_AT_CELL, { string: formatUpdatedAt(new Date()) });
+  xml = setCell(xml, UPDATED_AT_CELL, { string: formatUpdatedAt(new Date(), lang) });
+
+  if (lang === "en" || lang === "de") {
+    for (const [coord, texts] of Object.entries(TEMPLATE_LABELS)) {
+      xml = setCell(xml, coord, { string: texts[lang] });
+    }
+  }
 
   const skillCells = buildSkillCells(skills || []);
   for (const [coord, value] of Object.entries(skillCells)) {
@@ -446,6 +508,7 @@ const selectedCountEl = document.getElementById("selectedCount");
 const statusEl = document.getElementById("status");
 const generateXlsxBtn = document.getElementById("generateXlsxBtn");
 const generatePdfBtn = document.getElementById("generatePdfBtn");
+const selectAllBtn = document.getElementById("selectAllBtn");
 
 let projects = [];
 let byId = new Map();
@@ -568,7 +631,28 @@ function renderSelectedList() {
   }
   selectedCountEl.textContent = String(selectedOrder.length);
   selectedCountEl.parentElement.style.color = selectedOrder.length > MAX_PROJECTS ? "var(--shu)" : "";
+  updateSelectAllBtn();
 }
+
+function allSelectableIds() {
+  // 出力できる上限（BLOCK_COUNT）までを「全て」とみなす。
+  return projects.slice(0, MAX_PROJECTS).map((p) => p.id);
+}
+function updateSelectAllBtn() {
+  const all = allSelectableIds();
+  const isAll = all.length > 0 && all.every((id) => selectedOrder.includes(id));
+  selectAllBtn.textContent = ui(isAll ? "clearAll" : "selectAll");
+  selectAllBtn.dataset.mode = isAll ? "clear" : "all";
+}
+selectAllBtn.addEventListener("click", () => {
+  if (selectAllBtn.dataset.mode === "clear") {
+    selectedOrder = [];
+  } else {
+    selectedOrder = allSelectableIds();
+  }
+  renderTiles();
+  renderSelectedList();
+});
 
 let searchDebounce = null;
 searchInput.addEventListener("input", () => {
@@ -591,6 +675,14 @@ function validateSelection() {
   return selectedOrder.map((id) => byId.get(id)).filter(Boolean);
 }
 
+function outputFilename(ext) {
+  const stamp = new Date().toISOString().slice(0, 10);
+  const base = currentLang === "ja" ? "スキルシート_草間暁"
+    : currentLang === "de" ? "Skill-Sheet_AkiraKusama"
+    : "SkillSheet_AkiraKusama";
+  return `${base}_${stamp}.${ext}`;
+}
+
 generateXlsxBtn.addEventListener("click", async () => {
   const selected = validateSelection();
   if (!selected) return;
@@ -599,10 +691,9 @@ generateXlsxBtn.addEventListener("click", async () => {
     const res = await fetch("template.xlsx");
     if (!res.ok) throw new Error("テンプレートの取得に失敗しました");
     const templateBuffer = await res.arrayBuffer();
-    const blob = await fillWorkbook(templateBuffer, selected, window.SKILLS || []);
+    const blob = await fillWorkbook(templateBuffer, selected, window.SKILLS || [], currentLang);
 
-    const stamp = new Date().toISOString().slice(0, 10);
-    const filename = `スキルシート_草間暁_${stamp}.xlsx`;
+    const filename = outputFilename("xlsx");
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -622,7 +713,12 @@ generatePdfBtn.addEventListener("click", () => {
   if (!selected) return;
   buildPrintView(selected, window.SKILLS || [], currentLang);
   setStatus("", "");
+  // ブラウザの「PDFに保存」は document.title を初期ファイル名に使うため、
+  // 印刷の間だけタイトルを言語別のファイル名（拡張子なし）に差し替える。
+  const originalTitle = document.title;
+  document.title = outputFilename("pdf").replace(/\.pdf$/, "");
   window.print();
+  setTimeout(() => { document.title = originalTitle; }, 500);
 });
 
 /* ============================================================
@@ -653,4 +749,7 @@ function rebuildProjects() {
   renderSelectedList();
 }
 
+// 初期状態は「全て選択」（デフォルト出力＝全件）。
+projects = (window.PROJECTS || []).map((p) => toBlock(p, currentLang));
+selectedOrder = allSelectableIds();
 rebuildProjects();

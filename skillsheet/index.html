@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
 <link rel="stylesheet" href="/assets/style.css" />
-<link rel="stylesheet" href="style.css?v=2" />
+<link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
 <div class="app-ui">
@@ -44,10 +44,11 @@
   <aside class="selection" aria-label="選択中の案件">
     <div class="selection-head">
       <h2><span data-i18n="selectedLabel">選択中</span> <span id="selectedCount">0</span> / <span id="maxCount">16</span></h2>
-      <div class="generate-buttons">
-        <button id="generateXlsxBtn" type="button" class="primary" data-i18n="generateXlsx">Excelで書き出す</button>
-        <button id="generatePdfBtn" type="button" class="primary ghost" data-i18n="generatePdf">PDFで書き出す</button>
-      </div>
+      <button id="selectAllBtn" type="button" class="select-all-btn">全て選択</button>
+    </div>
+    <div class="generate-buttons">
+      <button id="generateXlsxBtn" type="button" class="primary" data-i18n="generateXlsx">Excelで書き出す</button>
+      <button id="generatePdfBtn" type="button" class="primary ghost" data-i18n="generatePdf">PDFで書き出す</button>
     </div>
     <p id="status" class="status" role="status"></p>
     <ol id="selectedList" class="selected-list"></ol>
@@ -85,6 +86,6 @@
 <script src="/assets/data.js"></script>
 <script src="/assets/locale.js"></script>
 <script src="vendor/jszip.min.js"></script>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

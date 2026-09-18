@@ -167,8 +167,9 @@ main {
   background: var(--card);
   padding: 14px;
 }
-.selection-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.selection-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
 .selection-head h2 { margin: 0; font-size: 1rem; font-family: "Shippori Mincho", serif; }
+.select-all-btn { flex: none; letter-spacing: .02em; }
 .generate-buttons { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 
 .selection button, .search-bar button {
