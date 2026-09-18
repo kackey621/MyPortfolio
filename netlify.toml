@@ -29,3 +29,12 @@
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# スキルシートツール（/skillsheet/）は ?v= によるキャッシュバスティングを
+# 行っていないため、HTML・JS・CSS・テンプレートを常に検証させる。
+# これがないと、デプロイ後も古い app.js が新しい index.html と食い違って
+# 読み込まれ続け（要素IDの不一致でJSが例外を投げ、案件が一切表示されない）。
+[[headers]]
+  for = "/skillsheet/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
